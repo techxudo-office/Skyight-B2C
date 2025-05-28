@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff, Plane } from "lucide-react"
 import { Header } from "@/components/header"
+import { AuthHeader } from "@/components/authHeader"
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -33,7 +34,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <AuthHeader />
 
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto">
