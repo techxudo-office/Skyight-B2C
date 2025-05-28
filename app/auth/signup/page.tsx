@@ -43,7 +43,9 @@ export default function SignupPage() {
                 <Plane className="h-8 w-8 text-blue-600" />
               </div>
               <CardTitle className="text-2xl">Create Account</CardTitle>
-              <CardDescription>Join FlightBooker and start your journey</CardDescription>
+              <CardDescription>
+                Join Skyight and start your journey
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-4">
@@ -55,7 +57,9 @@ export default function SignupPage() {
                       id="firstName"
                       placeholder="John"
                       value={formData.firstName}
-                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, firstName: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -65,7 +69,9 @@ export default function SignupPage() {
                       id="lastName"
                       placeholder="Doe"
                       value={formData.lastName}
-                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, lastName: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -78,7 +84,9 @@ export default function SignupPage() {
                     type="email"
                     placeholder="john@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -91,7 +99,9 @@ export default function SignupPage() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a password"
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
                       required
                     />
                     <Button
@@ -101,7 +111,11 @@ export default function SignupPage() {
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -114,7 +128,12 @@ export default function SignupPage() {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
                       required
                     />
                     <Button
@@ -122,9 +141,15 @@ export default function SignupPage() {
                       variant="ghost"
                       size="icon"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -133,21 +158,36 @@ export default function SignupPage() {
                   <Checkbox
                     id="terms"
                     checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) => setFormData({ ...formData, agreeToTerms: checked as boolean })}
+                    onCheckedChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        agreeToTerms: checked as boolean,
+                      })
+                    }
                   />
                   <Label htmlFor="terms" className="text-sm">
                     I agree to the{" "}
-                    <Link href="/terms" className="text-blue-600 hover:underline">
+                    <Link
+                      href="/terms"
+                      className="text-blue-600 hover:underline"
+                    >
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="text-blue-600 hover:underline">
+                    <Link
+                      href="/privacy"
+                      className="text-blue-600 hover:underline"
+                    >
                       Privacy Policy
                     </Link>
                   </Label>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={!formData.agreeToTerms}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!formData.agreeToTerms}
+                >
                   Create Account
                 </Button>
               </form>
@@ -165,7 +205,10 @@ export default function SignupPage() {
 
               <div className="text-center text-sm">
                 Already have an account?{" "}
-                <Link href="/auth/login" className="text-blue-600 hover:underline">
+                <Link
+                  href="/auth/login"
+                  className="text-blue-600 hover:underline"
+                >
                   Sign in
                 </Link>
               </div>
@@ -174,5 +217,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

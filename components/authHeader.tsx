@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Plane, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes"
 
-export function Header() {
+export function AuthHeader() {
   const [isOpen, setIsOpen] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -33,7 +33,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          {/* <nav className="hidden md:flex items-center space-x-6">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -43,7 +43,7 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
-          </nav>
+          </nav> */}
 
           <div className="flex items-center space-x-4">
             <Button

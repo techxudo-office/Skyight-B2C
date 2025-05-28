@@ -39,8 +39,12 @@ export default function HomePage() {
       <section className="relative bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-800 dark:to-purple-900 text-white py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Find Your Perfect Flight</h1>
-            <p className="text-xl md:text-2xl opacity-90">Book flights to anywhere in the world with the best prices</p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              Find Your Perfect Flight
+            </h1>
+            <p className="text-xl md:text-2xl opacity-90">
+              Book flights to anywhere in the world with the best prices
+            </p>
           </div>
 
           {/* Search Form */}
@@ -48,46 +52,63 @@ export default function HomePage() {
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">From</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    From
+                  </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Departure city"
                       className="pl-10"
                       value={searchData.from}
-                      onChange={(e) => setSearchData({ ...searchData, from: e.target.value })}
+                      onChange={(e) =>
+                        setSearchData({ ...searchData, from: e.target.value })
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">To</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    To
+                  </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Destination city"
                       className="pl-10"
                       value={searchData.to}
-                      onChange={(e) => setSearchData({ ...searchData, to: e.target.value })}
+                      onChange={(e) =>
+                        setSearchData({ ...searchData, to: e.target.value })
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Departure</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Departure
+                  </label>
                   <div className="relative">
                     <CalendarDays className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="date"
                       className="pl-10"
                       value={searchData.departure}
-                      onChange={(e) => setSearchData({ ...searchData, departure: e.target.value })}
+                      onChange={(e) =>
+                        setSearchData({
+                          ...searchData,
+                          departure: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Passengers</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Passengers
+                  </label>
                   <div className="relative">
                     <Users className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -96,13 +117,21 @@ export default function HomePage() {
                       max="9"
                       className="pl-10"
                       value={searchData.passengers}
-                      onChange={(e) => setSearchData({ ...searchData, passengers: e.target.value })}
+                      onChange={(e) =>
+                        setSearchData({
+                          ...searchData,
+                          passengers: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button
+                    onClick={handleSearch}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
                     <Plane className="mr-2 h-4 w-4" />
                     Search Flights
                   </Button>
@@ -116,13 +145,17 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="py-16 bg-muted/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose FlightBooker?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Why Choose Skyight?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="text-center">
               <CardContent className="p-6">
                 <Clock className="h-12 w-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
-                <p className="text-muted-foreground">Round-the-clock customer service for all your travel needs</p>
+                <p className="text-muted-foreground">
+                  Round-the-clock customer service for all your travel needs
+                </p>
               </CardContent>
             </Card>
 
@@ -130,7 +163,10 @@ export default function HomePage() {
               <CardContent className="p-6">
                 <Wifi className="h-12 w-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
-                <p className="text-muted-foreground">Compare prices from hundreds of airlines to find the best deals</p>
+                <p className="text-muted-foreground">
+                  Compare prices from hundreds of airlines to find the best
+                  deals
+                </p>
               </CardContent>
             </Card>
 
@@ -138,7 +174,9 @@ export default function HomePage() {
               <CardContent className="p-6">
                 <Coffee className="h-12 w-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-xl font-semibold mb-2">Easy Booking</h3>
-                <p className="text-muted-foreground">Simple and secure booking process in just a few clicks</p>
+                <p className="text-muted-foreground">
+                  Simple and secure booking process in just a few clicks
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -159,7 +197,10 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {trendingDestinations.map((destination, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="overflow-hidden hover:shadow-lg transition-shadow"
+              >
                 <div className="aspect-video bg-muted">
                   <img
                     src={destination.image || "/placeholder.svg"}
@@ -171,7 +212,9 @@ export default function HomePage() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="font-semibold">{destination.city}</h3>
-                      <p className="text-sm text-muted-foreground">{destination.country}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {destination.country}
+                      </p>
                     </div>
                     <Badge variant="secondary">{destination.price}</Badge>
                   </div>
@@ -188,5 +231,5 @@ export default function HomePage() {
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FlightBooker - Find Your Perfect Flight",
+  title: "Skyight - Find Your Perfect Flight",
   description: "Book flights to anywhere in the world with the best prices. Your trusted partner for travel.",
     generator: 'v0.dev'
 }
