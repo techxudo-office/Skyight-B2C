@@ -1,20 +1,49 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { MessageCircle, Phone, Mail, Clock, Search, Send, HelpCircle, FileText, CreditCard, Plane } from "lucide-react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  MessageCircle,
+  Phone,
+  Mail,
+  Clock,
+  Search,
+  Send,
+  HelpCircle,
+  FileText,
+  CreditCard,
+  Plane,
+} from "lucide-react";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 
 export default function SupportPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [ticketForm, setTicketForm] = useState({
     subject: "",
     category: "",
@@ -22,9 +51,7 @@ export default function SupportPage() {
     description: "",
     email: "",
     bookingReference: "",
-  })
-
-  const [searchQuery, setSearchQuery] = useState("")
+  });
 
   const faqs = [
     {
@@ -57,7 +84,7 @@ export default function SupportPage() {
       answer:
         "You can add baggage to your booking through your airline's website or by contacting them directly. It's usually cheaper to add baggage online before your flight rather than at the airport.",
     },
-  ]
+  ];
 
   const supportChannels = [
     {
@@ -81,19 +108,19 @@ export default function SupportPage() {
       availability: "Response within 24 hours",
       action: "Send Email",
     },
-  ]
+  ];
 
   const handleTicketSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Support ticket submitted:", ticketForm)
+    e.preventDefault();
+    console.log("Support ticket submitted:", ticketForm);
     // Handle ticket submission
-  }
+  };
 
   const filteredFaqs = faqs.filter(
     (faq) =>
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,8 +129,12 @@ export default function SupportPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-800 dark:to-purple-900 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">How Can We Help You?</h1>
-          <p className="text-xl mb-8 opacity-90">Get the support you need for your travel experience</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            How Can We Help You?
+          </h1>
+          <p className="text-xl mb-8 opacity-90">
+            Get the support you need for your travel experience
+          </p>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
@@ -121,17 +152,28 @@ export default function SupportPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Support Channels */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Contact Our Support Team</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Contact Our Support Team
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {supportChannels.map((channel, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="text-center hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="p-6">
                   <channel.icon className="h-12 w-12 mx-auto mb-4 text-blue-600" />
-                  <h3 className="text-xl font-semibold mb-2">{channel.title}</h3>
-                  <p className="text-muted-foreground mb-4">{channel.description}</p>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {channel.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {channel.description}
+                  </p>
                   <div className="flex items-center justify-center mb-4">
                     <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{channel.availability}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {channel.availability}
+                    </span>
                   </div>
                   <Button className="w-full">{channel.action}</Button>
                 </CardContent>
@@ -149,13 +191,17 @@ export default function SupportPage() {
                   <HelpCircle className="h-5 w-5 mr-2" />
                   Frequently Asked Questions
                 </CardTitle>
-                <CardDescription>Find quick answers to common questions</CardDescription>
+                <CardDescription>
+                  Find quick answers to common questions
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Accordion type="single" collapsible className="w-full">
                   {filteredFaqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`}>
-                      <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                      <AccordionTrigger className="text-left">
+                        {faq.question}
+                      </AccordionTrigger>
                       <AccordionContent>{faq.answer}</AccordionContent>
                     </AccordionItem>
                   ))}
@@ -163,7 +209,9 @@ export default function SupportPage() {
 
                 {filteredFaqs.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No FAQs found matching your search.</p>
+                    <p className="text-muted-foreground">
+                      No FAQs found matching your search.
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -178,7 +226,9 @@ export default function SupportPage() {
                   <FileText className="h-5 w-5 mr-2" />
                   Submit a Support Ticket
                 </CardTitle>
-                <CardDescription>Can't find what you're looking for? Send us a message</CardDescription>
+                <CardDescription>
+                  Can't find what you're looking for? Send us a message
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleTicketSubmit} className="space-y-4">
@@ -188,18 +238,27 @@ export default function SupportPage() {
                       id="email"
                       type="email"
                       value={ticketForm.email}
-                      onChange={(e) => setTicketForm({ ...ticketForm, email: e.target.value })}
+                      onChange={(e) =>
+                        setTicketForm({ ...ticketForm, email: e.target.value })
+                      }
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="bookingReference">Booking Reference (Optional)</Label>
+                    <Label htmlFor="bookingReference">
+                      Booking Reference (Optional)
+                    </Label>
                     <Input
                       id="bookingReference"
                       placeholder="e.g., FB123456"
                       value={ticketForm.bookingReference}
-                      onChange={(e) => setTicketForm({ ...ticketForm, bookingReference: e.target.value })}
+                      onChange={(e) =>
+                        setTicketForm({
+                          ...ticketForm,
+                          bookingReference: e.target.value,
+                        })
+                      }
                     />
                   </div>
 
@@ -207,17 +266,23 @@ export default function SupportPage() {
                     <Label htmlFor="category">Category</Label>
                     <Select
                       value={ticketForm.category}
-                      onValueChange={(value) => setTicketForm({ ...ticketForm, category: value })}
+                      onValueChange={(value) =>
+                        setTicketForm({ ...ticketForm, category: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="booking">Booking Issues</SelectItem>
-                        <SelectItem value="payment">Payment & Refunds</SelectItem>
+                        <SelectItem value="payment">
+                          Payment & Refunds
+                        </SelectItem>
                         <SelectItem value="flight">Flight Changes</SelectItem>
                         <SelectItem value="baggage">Baggage</SelectItem>
-                        <SelectItem value="technical">Technical Issues</SelectItem>
+                        <SelectItem value="technical">
+                          Technical Issues
+                        </SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
@@ -227,7 +292,9 @@ export default function SupportPage() {
                     <Label htmlFor="priority">Priority</Label>
                     <Select
                       value={ticketForm.priority}
-                      onValueChange={(value) => setTicketForm({ ...ticketForm, priority: value })}
+                      onValueChange={(value) =>
+                        setTicketForm({ ...ticketForm, priority: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select priority" />
@@ -246,7 +313,12 @@ export default function SupportPage() {
                     <Input
                       id="subject"
                       value={ticketForm.subject}
-                      onChange={(e) => setTicketForm({ ...ticketForm, subject: e.target.value })}
+                      onChange={(e) =>
+                        setTicketForm({
+                          ...ticketForm,
+                          subject: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -257,7 +329,12 @@ export default function SupportPage() {
                       id="description"
                       placeholder="Please provide as much detail as possible..."
                       value={ticketForm.description}
-                      onChange={(e) => setTicketForm({ ...ticketForm, description: e.target.value })}
+                      onChange={(e) =>
+                        setTicketForm({
+                          ...ticketForm,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       required
                     />
@@ -301,5 +378,5 @@ export default function SupportPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
