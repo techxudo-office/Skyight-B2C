@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
@@ -14,7 +14,8 @@ import {
   Trustedby,
   VedioSec,
 } from "../components/landing/component";
-import { plane3 } from "../app/assets";
+import plane3 from "../app/assets/plane3.png";
+import Image from "next/image";
 
 export default function Page() {
   const { scrollYProgress } = useScroll();
@@ -42,30 +43,18 @@ export default function Page() {
       <Trustedby />
       <Faqs />
       <ContactForm />
-      <motion.img
-        src={plane3}
-        alt="plane"
+      {/* <motion.div
         className="fixed z-0 w-44 max-sm:hidden"
-        style={{
-          x,
-          y,
-          rotate,
-          left: 0,
-          bottom: 0,
-        }}
-      />
-      <motion.img
-        src={plane3}
-        alt="plane"
-        className="fixed z-0 w-44 rotate-180 max-sm:hidden"
-        style={{
-          x,
-          y,
-          rotate,
-          right: 0,
-          top: 0,
-        }}
-      />
+        style={{ x, y, rotate, left: 0, bottom: 0 }}
+      >
+        <Image src={plane3} alt="plane" />
+      </motion.div>
+      <motion.div
+        className="fixed z-0 w-44 max-sm:hidden rotate-180"
+        style={{ x, y, rotate, left: 0, bottom: 0 }}
+      >
+        <Image src={plane3} alt="plane" />
+      </motion.div> */}
     </>
   );
 }

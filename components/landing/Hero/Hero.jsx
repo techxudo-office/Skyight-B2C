@@ -10,10 +10,7 @@ export default function Hero() {
         {/* Left Text Section */}
         <div className="flex flex-col justify-between items-center text-center gap-6 lg:gap-10 w-full ">
           <div className="">
-            <h1
-              className="text-4xl max-w-2xl mx-auto  sm:text-5xl md:text-6xl font-sans font-semibold leading-tight mb-6 
-                    "
-            >
+            <h1 className="text-4xl max-w-2xl mx-auto  sm:text-5xl md:text-6xl font-sans font-semibold leading-tight mb-6 ">
               Wherever You Go,
               <br /> Let Us{" "}
               <span className="font-bold text-primary">Make It Happen</span>

@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import ProfileIcon from "./ProfileIcon/ProfileIcon";
-// import { Link } from 'react-router';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,28 +28,40 @@ const Navbar = () => {
         scrolled ? "bg-white shadow-lg" : "bg-transparent"
       }`}
     >
-      {/* Desktop Navbar */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          {/* <Link to={"/"} className={`text-xl font-bold transition-colors duration-300 text-text`}>
-                        <img src={skyightLogo} alt="Logo" className="h-8 w-auto" />
-                    </Link> */}
+          <Link href="/" className="text-xl font-bold text-text">
+            {/* Uncomment and import your logo if needed */}
+            {/* <Image src={skyightLogo} alt="Logo" className="h-8 w-auto" /> */}
+            Skyight
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex md:items-center md:gap-7 font-semibold text-sm">
-            {/* <Link to={"/about"} className={`hover:text-lightGray transition-all duration-200 text-text`}>
-                            About
-                        </Link>
-                        <Link to={"/pricing"} className={`hover:text-lightGray transition-all duration-200 text-text`}>
-                            Pricing
-                        </Link>
-                        <Link to={"/contact"} className={`hover:text-lightGray transition-all duration-200 text-text`}>
-                            Contact Us
-                        </Link> */}
+            {/* Example links - enable as needed */}
+            <Link
+              href="/about"
+              className="hover:text-lightGray transition-all text-text"
+            >
+              About
+            </Link>
+            <Link
+              href="/pricing"
+              className="hover:text-lightGray transition-all text-text"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-lightGray transition-all text-text"
+            >
+              Contact Us
+            </Link>
+
             <a
               href="tel:9292842269"
-              className={`hover:text-lightGray transition-all duration-200 text-text`}
+              className="hover:text-lightGray transition-all text-text"
             >
               (929) 284-2269
             </a>
@@ -64,7 +78,7 @@ const Navbar = () => {
               className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
-              stroke={"currentColor"}
+              stroke="currentColor"
             >
               <path
                 strokeLinecap="round"
@@ -84,15 +98,17 @@ const Navbar = () => {
             className="space-y-1 px-2 pb-3 pt-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            {/* <Link to={"/about"} className="block px-3 py-2 text-text">
-                            About
-                        </Link>
-                        <Link to={"/pricing"} className="block px-3 py-2 text-text">
-                            Pricing
-                        </Link>
-                        <Link to={"/contact"} className="block px-3 py-2 text-text">
-                            Contact
-                        </Link> */}
+            {/* Enable these links if needed */}
+            <Link href="/about" className="block px-3 py-2 text-text">
+              About
+            </Link>
+            <Link href="/pricing" className="block px-3 py-2 text-text">
+              Pricing
+            </Link>
+            <Link href="/contact" className="block px-3 py-2 text-text">
+              Contact
+            </Link>
+
             <a href="tel:9292842269" className="block px-3 py-2 text-text">
               (929) 284-2269
             </a>
@@ -103,8 +119,12 @@ const Navbar = () => {
             >
               Login
             </a>
-            <span className="block px-3 py-2 text-text">My Reservations</span>
-            <span className="block px-3 py-2 text-text">My Favourites</span>
+            <Link href="/reservations" className="block px-3 py-2 text-text">
+              My Reservations
+            </Link>
+            <Link href="/favourites" className="block px-3 py-2 text-text">
+              My Favourites
+            </Link>
           </div>
         </div>
       )}
