@@ -1,30 +1,38 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Eye, EyeOff, Plane } from "lucide-react"
-import { Header } from "@/components/header"
-import { AuthHeader } from "@/components/authHeader"
+"use client";
+import type React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Eye, EyeOff, Plane } from "lucide-react";
+import { Header } from "@/components/header";
+import { AuthHeader } from "@/components/authHeader";
+import { useDispatch } from "react-redux";
+import { login } from "../../../_core/features/persistSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const dispatch = useAppDispatch();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
-
+  });
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log("Login attempt:", formData)
-  }
+    e.preventDefault();
+    // Pass formData as the payload
+    dispatch(login(formData));
+    console.log("Login attempt:", formData);
+  };
 
   return (
     <div className="min-h-screen bg-background">
