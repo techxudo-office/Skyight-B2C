@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /Skyight-B2C
 COPY package*.json ./
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm ci
+RUN npm i
 COPY . .
 RUN npm run build
 
