@@ -38,7 +38,7 @@ jobs:
           script: |
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            docker rm -f tmp-extract-dashboard 2>/dev/null || true
+            docker rm -f tmp-extract-b2c 2>/dev/null || true
 
             echo "Pulling latest b2c image…"
             docker pull connectazeeza/skight-frontend-b2c:latest
