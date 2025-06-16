@@ -1,10 +1,9 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
-import { ThemeProvider } from "@/components/theme-provider";
 import { Provider } from "react-redux";
-import { store } from "@/_core/store/store";
+import { store } from "../_core/store/store"
+import { ThemeProvider } from "../components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
