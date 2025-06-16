@@ -1,17 +1,7 @@
 // File: utils/ApiHelper.ts
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import { BASE_URL } from "./ApiBaseUrl";
 import toast from "react-hot-toast";
-
-interface RequestOptions {
-  data?: any;
-  token?: string;
-  headers?: Record<string, string>;
-  successMessage?: string;
-  errorMessage?: string;
-  logoutCallback?: () => void;
-  showNoErrors?: boolean;
-}
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -22,8 +12,8 @@ const apiClient = axios.create({
 });
 
 const makeRequest = async (
-  method: AxiosRequestConfig["method"],
-  endpoint: string,
+  method,
+  endpoint,
   {
     data = null,
     token = "",
@@ -32,10 +22,10 @@ const makeRequest = async (
     errorMessage = "",
     logoutCallback = () => {},
     showNoErrors = false,
-  }: RequestOptions
-): Promise<any> => {
+  }
+) => {
   try {
-    const config: AxiosRequestConfig = {
+    const config = {
       method,
       url: endpoint,
       ...(data && { data }),
@@ -49,7 +39,7 @@ const makeRequest = async (
     return (
       response.data?.data || response.data?.message || response.data || response
     );
-  } catch (error: any) {
+  } catch (error) {
     const status = error.response?.status;
     const apiErrors = error.response?.data?.data?.errors;
     const errorMsg =
