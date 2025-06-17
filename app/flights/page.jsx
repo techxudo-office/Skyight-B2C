@@ -21,7 +21,7 @@ import {
 import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import FlightSearchSummary from "./FlightSearchSummary";
 
 export default function FlightsPage() {
@@ -108,13 +108,13 @@ export default function FlightsPage() {
     <div className="space-y-6">
       <div>
         <h3 className="mb-3 font-semibold">Price Range</h3>
-        <Slider
+        {/* <Slider
           value={priceRange}
           onValueChange={setPriceRange}
           max={1000}
           step={50}
           className="mb-2"
-        />
+        /> */}
         <div className="flex justify-between text-sm text-muted-foreground">
           <span>${priceRange[0]}</span>
           <span>${priceRange[1]}</span>
