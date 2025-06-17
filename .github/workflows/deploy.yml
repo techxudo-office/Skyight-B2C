@@ -20,7 +20,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./DockerFile
+          file: ./Dockerfile
           push: true
           tags: connectazeeza/skight-frontend-b2c:latest
 
@@ -28,46 +28,31 @@ jobs:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2 and update static site
+      - name: SSH to EC2 and update Next.js app
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            # login to dockerhub
+            # login to Docker Hub
             echo ${{ secrets.DOCKERHUB_TOKEN }} \
               | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            # remove any old temp container
-            docker rm -f tmp-extract-b2c 2>/dev/null || true
+            # stop old container
+            docker rm -f b2c-app 2>/dev/null || true
 
-            # pull & create
+            # pull and run new image
             docker pull connectazeeza/skight-frontend-b2c:latest
-            docker create --name tmp-extract-b2c connectazeeza/skight-frontend-b2c:latest
+            docker run -d --name b2c-app \
+              -e NODE_ENV=production \
+              -p 3000:3000 \
+              connectazeeza/skight-frontend-b2c:latest
 
-            # path on your EC2 where static files live
-            B2C_OUT=/home/ec2-user/Skyight-B2C/dist
+            echo "B2C Next.js app deployed ✅"
 
-            echo "Before update:"
-            ls -l $B2C_OUT || echo "no folder yet"
-
-            # clean out
-            rm -rf $B2C_OUT
-
-            # copy the nginx html 
-            docker cp tmp-extract-b2c:/usr/share/nginx/html $B2C_OUT
-
-            echo "After update:"
-            ls -l $B2C_OUT
-
-            # cleanup and chown
-            docker rm tmp-extract-b2c
-            sudo chown -R ec2-user:ec2-user $B2C_OUT
-
-            echo "B2C static site updated ✅"
-
-      - name: Restart Nginx (all sites)
+      - name: Reload Nginx
         run: |
-          sudo systemctl restart nginx
-          echo "Nginx restarted successfully."
+          # assume nginx is reverse-proxy to localhost:3000
+          sudo systemctl reload nginx
+          echo "Nginx reloaded."
