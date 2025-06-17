@@ -45,7 +45,7 @@ jobs:
             docker pull connectazeeza/skight-frontend-b2c:latest
             docker create --name tmp-extract-b2c connectazeeza/skight-frontend-b2c:latest
 
-            DST=/home/ec2-user/Skyight-B2C/dist
+            DST=/home/ec2-user/Skyight-B2C/out
             echo "Before update:"; ls -l $DST || echo "no folder yet"
 
             # replace static files
