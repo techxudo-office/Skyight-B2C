@@ -1,9 +1,8 @@
-name: Build, Push and Deploy Dashboard Image
+name: Build, Push and Deploy B2C Image
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build_and_push:
@@ -29,44 +28,46 @@ jobs:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2 and update dist folder from Docker image with verification
+      - name: SSH to EC2 and update static site
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            # login to dockerhub
+            echo ${{ secrets.DOCKERHUB_TOKEN }} \
+              | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+            # remove any old temp container
             docker rm -f tmp-extract-b2c 2>/dev/null || true
 
-            echo "Pulling latest b2c image…"
+            # pull & create
             docker pull connectazeeza/skight-frontend-b2c:latest
-
-            echo "Creating temp container…"
             docker create --name tmp-extract-b2c connectazeeza/skight-frontend-b2c:latest
 
-            DASH_DIST=/home/ec2-user/Skyight-B2C/dist
+            # path on your EC2 where static files live
+            B2C_OUT=/home/ec2-user/Skyight-B2C/dist
 
             echo "Before update:"
-            ls -l $DASH_DIST || echo "dist folder not found"
+            ls -l $B2C_OUT || echo "no folder yet"
 
-            echo "Removing old dist…"
-            rm -rf $DASH_DIST
+            # clean out
+            rm -rf $B2C_OUT
 
-            echo "Copying build out of container…"
-            docker cp tmp-extract-b2c:/usr/share/nginx/html $DASH_DIST
+            # copy the nginx html 
+            docker cp tmp-extract-b2c:/usr/share/nginx/html $B2C_OUT
 
             echo "After update:"
-            ls -l $DASH_DIST || echo "dist folder not found"
+            ls -l $B2C_OUT
 
+            # cleanup and chown
             docker rm tmp-extract-b2c
+            sudo chown -R ec2-user:ec2-user $B2C_OUT
 
-            sudo chown -R ec2-user:ec2-user $DASH_DIST
+            echo "B2C static site updated ✅"
 
-            echo "B2C dist updated ✅"
-
-      - name: Restart Nginx (serve B2B, dashboard, & B2C)
+      - name: Restart Nginx (all sites)
         run: |
           sudo systemctl restart nginx
           echo "Nginx restarted successfully."

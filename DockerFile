@@ -1,15 +1,23 @@
-# Stage 1: Build
+# Stage 1: build & export
 FROM node:20-alpine AS builder
 WORKDIR /Skyight-B2C
+
+# install deps
 COPY package*.json ./
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm i --legacy-peer-deps
-COPY . .
-RUN echo "Contents of components/ui:" && ls -al /Skyight-B2C/components/ui
-RUN npm run build
+RUN npm ci --legacy-peer-deps
 
-# Stage 2: Serve with Nginx
+# copy source & build
+COPY . .
+RUN npm run build
+RUN npm run export   # <-- produces /Skyight-B2C/out
+
+# Stage 2: serve static with nginx
 FROM nginx:alpine
-COPY --from=builder /Skyight-B2C/dist /usr/share/nginx/html
+# remove default content
+RUN rm -rf /usr/share/nginx/html/*
+# copy your export
+COPY --from=builder /Skyight-B2C/out /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
