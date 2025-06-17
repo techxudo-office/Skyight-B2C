@@ -10,7 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -22,6 +21,7 @@ import {
 import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { Slider } from "@/components/ui/slider";
 import FlightSearchSummary from "./FlightSearchSummary";
 
 export default function FlightsPage() {
@@ -94,11 +94,11 @@ export default function FlightsPage() {
   const getAmenityIcon = (amenity) => {
     switch (amenity) {
       case "wifi":
-        return <Wifi className="h-4 w-4" />;
+        return <Wifi className="w-4 h-4" />;
       case "meals":
-        return <Utensils className="h-4 w-4" />;
+        return <Utensils className="w-4 h-4" />;
       case "entertainment":
-        return <Star className="h-4 w-4" />;
+        return <Star className="w-4 h-4" />;
       default:
         return null;
     }
@@ -107,7 +107,7 @@ export default function FlightsPage() {
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="font-semibold mb-3">Price Range</h3>
+        <h3 className="mb-3 font-semibold">Price Range</h3>
         <Slider
           value={priceRange}
           onValueChange={setPriceRange}
@@ -122,7 +122,7 @@ export default function FlightsPage() {
       </div>
 
       <div>
-        <h3 className="font-semibold mb-3">Airlines</h3>
+        <h3 className="mb-3 font-semibold">Airlines</h3>
         <div className="space-y-2">
           {airlines.map((airline) => (
             <div key={airline} className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ export default function FlightsPage() {
       </div>
 
       <div>
-        <h3 className="font-semibold mb-3">Stops</h3>
+        <h3 className="mb-3 font-semibold">Stops</h3>
         <div className="space-y-2">
           {stopOptions.map((stop) => (
             <div key={stop} className="flex items-center space-x-2">
@@ -165,22 +165,22 @@ export default function FlightsPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container px-4 py-8 mx-auto">
         {/* Search Summary */}
-        {/* <Suspense
+        <Suspense
           fallback={
-            <div className="mb-6 h-20 bg-muted animate-pulse rounded" />
+            <div className="h-20 mb-6 rounded bg-muted animate-pulse" />
           }
         >
           <FlightSearchSummary />
-        </Suspense> */}
+        </Suspense>
 
         <div className="flex gap-6">
           {/* Desktop Filters */}
-          <div className="hidden lg:block w-64 shrink-0">
+          <div className="hidden w-64 lg:block shrink-0">
             <Card>
               <CardContent className="p-6">
-                <h2 className="font-semibold mb-4">Filters</h2>
+                <h2 className="mb-4 font-semibold">Filters</h2>
                 <FilterSidebar />
               </CardContent>
             </Card>
@@ -189,7 +189,7 @@ export default function FlightsPage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Sort and Filter Controls */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center justify-between mb-6">
               <p className="text-muted-foreground">
                 {flights.length} flights found
               </p>
@@ -211,7 +211,7 @@ export default function FlightsPage() {
                 <Sheet>
                   <SheetTrigger asChild className="lg:hidden">
                     <Button variant="outline">
-                      <Filter className="h-4 w-4 mr-2" />
+                      <Filter className="w-4 h-4 mr-2" />
                       Filters
                     </Button>
                   </SheetTrigger>
@@ -232,7 +232,7 @@ export default function FlightsPage() {
               {flights.map((flight) => (
                 <Card
                   key={flight.id}
-                  className="hover:shadow-md transition-shadow"
+                  className="transition-shadow hover:shadow-md"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -245,7 +245,7 @@ export default function FlightsPage() {
                         <div>
                           <h3 className="font-semibold">{flight.airline}</h3>
                           <div className="flex items-center space-x-1">
-                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                             <span className="text-sm text-muted-foreground">
                               {flight.rating}
                             </span>
@@ -255,7 +255,7 @@ export default function FlightsPage() {
 
                       <div className="flex items-center space-x-8">
                         <div className="text-center">
-                          <div className="font-semibold text-lg">
+                          <div className="text-lg font-semibold">
                             {flight.departure.time}
                           </div>
                           <div className="text-sm text-muted-foreground">
@@ -267,10 +267,10 @@ export default function FlightsPage() {
                           <div className="text-sm text-muted-foreground">
                             {flight.duration}
                           </div>
-                          <div className="flex items-center space-x-2 my-1">
+                          <div className="flex items-center my-1 space-x-2">
                             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                             <div className="w-16 h-px bg-border"></div>
-                            <Plane className="h-4 w-4 text-blue-600" />
+                            <Plane className="w-4 h-4 text-blue-600" />
                             <div className="w-16 h-px bg-border"></div>
                             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                           </div>
@@ -280,7 +280,7 @@ export default function FlightsPage() {
                         </div>
 
                         <div className="text-center">
-                          <div className="font-semibold text-lg">
+                          <div className="text-lg font-semibold">
                             {flight.arrival.time}
                           </div>
                           <div className="text-sm text-muted-foreground">

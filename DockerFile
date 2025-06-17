@@ -5,6 +5,7 @@ COPY package*.json ./
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm i --legacy-peer-deps
 COPY . .
+RUN echo "Contents of components/ui:" && ls -al /Skyight-B2C/components/ui
 RUN npm run build
 
 # Stage 2: Serve with Nginx
