@@ -51,8 +51,5 @@ jobs:
 
             echo "B2C Next.js app deployed ✅"
 
-      - name: Reload Nginx
-        run: |
-          # assume nginx is reverse-proxy to localhost:3000
-          sudo systemctl reload nginx
-          echo "Nginx reloaded."
+            # reload nginx on EC2
+            sudo systemctl reload nginx && echo "Nginx reloaded."
