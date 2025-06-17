@@ -16,11 +16,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./DockerFile
+          file: ./Dockerfile
           push: true
           tags: connectazeeza/skight-frontend-b2c:latest
 
@@ -28,7 +28,7 @@ jobs:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2 and update Next.js app
+      - name: SSH to EC2 and update static site
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -36,20 +36,35 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             # login to Docker Hub
-            echo ${{ secrets.DOCKERHUB_TOKEN }} \
-              | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            # stop old container
-            docker rm -f b2c-app 2>/dev/null || true
+            # clean up any previous temp container
+            docker rm -f tmp-extract-b2c 2>/dev/null || true
 
-            # pull and run new image
+            # pull & create new temp container
             docker pull connectazeeza/skight-frontend-b2c:latest
-            docker run -d --name b2c-app \
-              -e NODE_ENV=production \
-              -p 3000:3000 \
-              connectazeeza/skight-frontend-b2c:latest
+            docker create --name tmp-extract-b2c connectazeeza/skight-frontend-b2c:latest
 
-            echo "B2C Next.js app deployed ✅"
+            DST=/home/ec2-user/Skyight-B2C/dist
+            echo "Before update:"; ls -l $DST || echo "no folder yet"
 
-            # reload nginx on EC2
-            sudo systemctl reload nginx && echo "Nginx reloaded."
+            # replace static files
+            rm -rf $DST
+            docker cp tmp-extract-b2c:/usr/share/nginx/html $DST
+
+            echo "After update:"; ls -l $DST
+
+            # cleanup & set permissions
+            docker rm tmp-extract-b2c
+            sudo chown -R ec2-user:ec2-user $DST
+
+            echo "✅ Static site updated"
+
+      - name: Restart Nginx on EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo systemctl restart nginx && echo "Nginx restarted."

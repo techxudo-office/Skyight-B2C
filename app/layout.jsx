@@ -17,7 +17,7 @@ const metadata = {
 
 export default function RootLayout({ children }) {
   useEffect(() => {
-    console.log("CICD TEST 5");
+    console.log("CICD TEST 6.1");
   }, []);
   return (
     <html lang="en" suppressHydrationWarning>

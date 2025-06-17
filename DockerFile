@@ -1,4 +1,4 @@
-# Stage 1: install & build
+# Stage 1: install & export
 FROM node:20-alpine AS builder
 WORKDIR /Skyight-B2C
 
@@ -6,20 +6,18 @@ WORKDIR /Skyight-B2C
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
-# copy source and build
+# copy source and build (build will generate both .next and out/)
 COPY . .
-RUN npm run build      # this creates .next
+RUN npm run build      # produces .next and out/ according to next.config.js
 
-# Stage 2: production image
-FROM node:20-alpine AS runner
-WORKDIR /Skyight-B2C
+# Stage 2: serve static with nginx
+FROM nginx:alpine
 
-# copy build outputs and deps
-COPY --from=builder /Skyight-B2C/.next ./.next
-COPY --from=builder /Skyight-B2C/node_modules ./node_modules
-COPY --from=builder /Skyight-B2C/package.json ./
+# clean default html
+RUN rm -rf /usr/share/nginx/html/*
 
-# expose and start
-ENV NODE_ENV=production
-EXPOSE 3000
-CMD ["npx", "next", "start"]
+# copy the exported static site
+COPY --from=builder /Skyight-B2C/out /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
