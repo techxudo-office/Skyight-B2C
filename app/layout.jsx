@@ -2,8 +2,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
-import { store } from "../_core/store/store"
+import { store } from "../_core/store/store";
 import { ThemeProvider } from "../components/theme-provider";
+import { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,9 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  console.log("CICD TEST 5");
+  useEffect(() => {
+    console.log("CICD TEST 5");
+  }, []);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
