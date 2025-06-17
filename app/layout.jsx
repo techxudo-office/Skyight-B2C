@@ -15,7 +15,7 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  console.log("CICD TEST 3");
+  console.log("CICD TEST 4");
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>

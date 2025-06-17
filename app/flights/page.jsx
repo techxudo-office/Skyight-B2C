@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -23,9 +22,9 @@ import {
 import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import FlightSearchSummary from "./FlightSearchSummary";
 
 export default function FlightsPage() {
-  const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("price");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedAirlines, setSelectedAirlines] = useState([]);
@@ -168,15 +167,13 @@ export default function FlightsPage() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Search Summary */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">
-            {searchParams.get("from")} → {searchParams.get("to")}
-          </h1>
-          <p className="text-muted-foreground">
-            {searchParams.get("departure")} • {searchParams.get("passengers")}{" "}
-            passenger(s)
-          </p>
-        </div>
+        {/* <Suspense
+          fallback={
+            <div className="mb-6 h-20 bg-muted animate-pulse rounded" />
+          }
+        >
+          <FlightSearchSummary />
+        </Suspense> */}
 
         <div className="flex gap-6">
           {/* Desktop Filters */}
