@@ -1,6 +1,5 @@
-// File: features/persistSlice.ts
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import makeRequest from "../../utils/ApiHelper";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userData: null,

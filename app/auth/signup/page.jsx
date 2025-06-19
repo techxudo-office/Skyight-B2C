@@ -15,8 +15,11 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { AuthHeader } from "@/components/authHeader";
+import { signup } from "@/_core/features/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function SignupPage() {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,20 +33,27 @@ export default function SignupPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup attempt:", formData);
+    let payload = {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      email: formData.email,
+      mobile_number: "03120735560",
+      password: formData.password,
+    };
+    dispatch(signup(payload));
+    console.log("Signup attempt:", payload);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <AuthHeader />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container px-4 py-16 mx-auto">
         <div className="max-w-md mx-auto">
           <Card>
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
-                <Plane className="h-8 w-8 text-blue-600" />
+                <Plane className="w-8 h-8 text-blue-600" />
               </div>
               <CardTitle className="text-2xl">Create Account</CardTitle>
               <CardDescription>
@@ -111,13 +121,13 @@ export default function SignupPage() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="w-4 h-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="w-4 h-4" />
                       )}
                     </Button>
                   </div>
@@ -143,15 +153,15 @@ export default function SignupPage() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="w-4 h-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="w-4 h-4" />
                       )}
                     </Button>
                   </div>
@@ -206,7 +216,7 @@ export default function SignupPage() {
                 </Button>
               </div>
 
-              <div className="text-center text-sm">
+              <div className="text-sm text-center">
                 Already have an account?{" "}
                 <Link
                   href="/auth/login"
