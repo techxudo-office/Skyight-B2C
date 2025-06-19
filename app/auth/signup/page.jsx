@@ -19,8 +19,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { AuthHeader } from "@/components/authHeader";
 import Loader from "@/components/loader";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +59,7 @@ export default function SignupPage() {
 
     try {
       await dispatch(signup(payload)).unwrap();
+      router.push("/auth/login");
     } finally {
       setIsLoading(false);
     }
