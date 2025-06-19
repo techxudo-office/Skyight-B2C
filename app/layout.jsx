@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "../_core/store/store";
 import { ThemeProvider } from "../components/theme-provider";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,15 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: { borderRadius: "8px", fontSize: "14px" },
+                success: { icon: "✅" },
+                error: { icon: "❌" },
+              }}
+            />
           </ThemeProvider>
         </Provider>
       </body>

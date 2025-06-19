@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useForm, Controller } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { signup } from "@/_core/features/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,33 +18,48 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { AuthHeader } from "@/components/authHeader";
-import { signup } from "@/_core/features/authSlice";
-import { useDispatch } from "react-redux";
+import Loader from "@/components/loader";
 
 export default function SignupPage() {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    agreeToTerms: false,
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      agreeToTerms: false,
+    },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let payload = {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
+  const passwordValue = watch("password");
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const payload = {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
       mobile_number: "03120735560",
-      password: formData.password,
+      password: data.password,
     };
-    dispatch(signup(payload));
-    console.log("Signup attempt:", payload);
+
+    try {
+      await dispatch(signup(payload)).unwrap();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,31 +80,38 @@ export default function SignupPage() {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
                       placeholder="John"
-                      value={formData.firstName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, firstName: e.target.value })
-                      }
-                      required
+                      {...register("firstName", {
+                        required: "First name is required",
+                      })}
                     />
+                    {errors.firstName && (
+                      <p className="text-sm text-red-500">
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
                       placeholder="Doe"
-                      value={formData.lastName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lastName: e.target.value })
-                      }
-                      required
+                      {...register("lastName", {
+                        required: "Last name is required",
+                      })}
                     />
+                    {errors.lastName && (
+                      <p className="text-sm text-red-500">
+                        {errors.lastName.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -96,12 +121,19 @@ export default function SignupPage() {
                     id="email"
                     type="email"
                     placeholder="john@example.com"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    required
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+                        message: "Invalid email address",
+                      },
+                    })}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -111,11 +143,10 @@ export default function SignupPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a password"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      required
+                      {...register("password", {
+                        required: "Password is required",
+                        minLength: { value: 6, message: "Minimum length is 6" },
+                      })}
                     />
                     <Button
                       type="button"
@@ -131,6 +162,11 @@ export default function SignupPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -140,14 +176,11 @@ export default function SignupPage() {
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
-                      value={formData.confirmPassword}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      required
+                      {...register("confirmPassword", {
+                        required: "Please confirm password",
+                        validate: (value) =>
+                          value === passwordValue || "Passwords do not match",
+                      })}
                     />
                     <Button
                       type="button"
@@ -165,18 +198,25 @@ export default function SignupPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="terms"
-                    checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        agreeToTerms: checked,
-                      })
-                    }
+                  <Controller
+                    control={control}
+                    name="agreeToTerms"
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <Checkbox
+                        id="terms"
+                        checked={value}
+                        onCheckedChange={onChange}
+                      />
+                    )}
                   />
                   <Label htmlFor="terms" className="text-sm">
                     I agree to the{" "}
@@ -195,13 +235,18 @@ export default function SignupPage() {
                     </Link>
                   </Label>
                 </div>
+                {errors.agreeToTerms && (
+                  <p className="text-sm text-red-500">
+                    You must agree to terms
+                  </p>
+                )}
 
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={!formData.agreeToTerms}
+                  disabled={!watch("agreeToTerms") || isLoading}
                 >
-                  Create Account
+                  {isLoading ? <Loader /> : "Create Account"}
                 </Button>
               </form>
 
