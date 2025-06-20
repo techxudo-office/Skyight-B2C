@@ -10,7 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -21,8 +20,8 @@ import {
 import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-// import { Slider } from "@/components/ui/slider";
 import FlightSearchSummary from "./components/FlightSearchSummary";
+import FilterSidebar from "./components/FilterSidebar";
 
 export default function FlightsPage() {
   const [sortBy, setSortBy] = useState("price");
@@ -104,62 +103,15 @@ export default function FlightsPage() {
     }
   };
 
-  const FilterSidebar = () => (
-    <div className="space-y-6">
-      <div>
-        <h3 className="mb-3 font-semibold">Price Range</h3>
-        {/* <Slider
-          value={priceRange}
-          onValueChange={setPriceRange}
-          max={1000}
-          step={50}
-          className="mb-2"
-        /> */}
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>${priceRange[0]}</span>
-          <span>${priceRange[1]}</span>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-3 font-semibold">Airlines</h3>
-        <div className="space-y-2">
-          {airlines.map((airline) => (
-            <div key={airline} className="flex items-center space-x-2">
-              <Checkbox
-                id={airline}
-                checked={selectedAirlines.includes(airline)}
-                onCheckedChange={(checked) =>
-                  handleAirlineChange(airline, checked)
-                }
-              />
-              <label htmlFor={airline} className="text-sm">
-                {airline}
-              </label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-3 font-semibold">Stops</h3>
-        <div className="space-y-2">
-          {stopOptions.map((stop) => (
-            <div key={stop} className="flex items-center space-x-2">
-              <Checkbox
-                id={stop}
-                checked={selectedStops.includes(stop)}
-                onCheckedChange={(checked) => handleStopsChange(stop, checked)}
-              />
-              <label htmlFor={stop} className="text-sm">
-                {stop}
-              </label>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  <FilterSidebar
+    priceRange={priceRange}
+    airlines={airlines}
+    selectedAirlines={selectedAirlines}
+    handleAirlineChange={handleAirlineChange}
+    stopOptions={stopOptions}
+    selectedStops={selectedStops}
+    handleStopsChange={handleStopsChange}
+  />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -181,7 +133,15 @@ export default function FlightsPage() {
             <Card>
               <CardContent className="p-6">
                 <h2 className="mb-4 font-semibold">Filters</h2>
-                <FilterSidebar />
+                <FilterSidebar
+                  priceRange={priceRange}
+                  airlines={airlines}
+                  selectedAirlines={selectedAirlines}
+                  handleAirlineChange={handleAirlineChange}
+                  stopOptions={stopOptions}
+                  selectedStops={selectedStops}
+                  handleStopsChange={handleStopsChange}
+                />
               </CardContent>
             </Card>
           </div>

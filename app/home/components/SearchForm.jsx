@@ -61,7 +61,7 @@ export default function SearchForm() {
       <CardContent className="p-6">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Toggle + Passengers */}
-          <div className="flex items-center mb-4 space-x-4">
+          <div className="flex flex-col items-start mb-4 space-y-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
             <ToggleGroup
               type="single"
               value={tripType}
@@ -75,41 +75,47 @@ export default function SearchForm() {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
+            <div className="w-full sm:w-auto">
+              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="flex items-center space-x-2"
+                  >
+                    <Users className="w-4 h-4" />
+                    <span>
+                      {adults} ADT - {children} CH - {infants} INF
+                    </span>
+                  </Button>
+                </PopoverTrigger>
 
-            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex items-center space-x-2"
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  sideOffset={8}
+                  className="w-52"
                 >
-                  <Users className="w-4 h-4" />
-                  <span>
-                    {adults} ADT - {children} CH - {infants} INF
-                  </span>
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent align="start" sideOffset={4} className="w-48">
-                <Counter
-                  label="Adults"
-                  value={adults}
-                  setValue={(v) =>
-                    setValue("adults", v, { shouldValidate: true })
-                  }
-                  min={1}
-                />
-                <Counter
-                  label="Children"
-                  value={children}
-                  setValue={(v) => setValue("children", v)}
-                />
-                <Counter
-                  label="Infants"
-                  value={infants}
-                  setValue={(v) => setValue("infants", v)}
-                />
-              </PopoverContent>
-            </Popover>
+                  <Counter
+                    label="Adults"
+                    value={adults}
+                    setValue={(v) =>
+                      setValue("adults", v, { shouldValidate: true })
+                    }
+                    min={1}
+                  />
+                  <Counter
+                    label="Children"
+                    value={children}
+                    setValue={(v) => setValue("children", v)}
+                  />
+                  <Counter
+                    label="Infants"
+                    value={infants}
+                    setValue={(v) => setValue("infants", v)}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
