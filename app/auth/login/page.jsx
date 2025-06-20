@@ -1,8 +1,4 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -10,56 +6,79 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
+import { useState } from "react";
+import Loader from "@/components/loader";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { AuthHeader } from "@/components/authHeader";
-import { useDispatch } from "react-redux";
+import { Separator } from "@/components/ui/separator";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../_core/features/persistSlice";
 
 export default function LoginPage() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const { isLoading } = useSelector((state) => state.persist);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Pass formData as the payload
-    dispatch(login(formData));
-    console.log("Login attempt:", formData);
+
+  const onSubmit = async (data) => {
+    dispatch(login(data))
+      .unwrap()
+      .then(() => router.push("/"));
   };
 
   return (
     <div className="min-h-screen bg-background">
       <AuthHeader />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container px-4 py-16 mx-auto">
         <div className="max-w-md mx-auto">
           <Card>
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
-                <Plane className="h-8 w-8 text-blue-600" />
+                <Plane className="w-8 h-8 text-blue-600" />
               </div>
               <CardTitle className="text-2xl">Welcome Back</CardTitle>
               <CardDescription>Sign in to your Skyight account</CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    required
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -69,26 +88,29 @@ export default function LoginPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      required
+                      {...register("password", {
+                        required: "Password is required",
+                      })}
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword((prev) => !prev)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="w-4 h-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="w-4 h-4" />
                       )}
                     </Button>
                   </div>
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -100,8 +122,8 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Sign In
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader /> : "Create Account"}
                 </Button>
               </form>
 
@@ -116,8 +138,8 @@ export default function LoginPage() {
                 </Button>
               </div>
 
-              <div className="text-center text-sm">
-                {"Don't have an account? "}
+              <div className="text-sm text-center">
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/auth/signup"
                   className="text-blue-600 hover:underline"

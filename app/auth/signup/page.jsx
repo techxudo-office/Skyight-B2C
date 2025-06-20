@@ -255,14 +255,14 @@ export default function SignupPage() {
 
               <Separator />
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Button variant="outline" className="w-full">
                   Continue with Google
                 </Button>
                 <Button variant="outline" className="w-full">
                   Continue with Facebook
                 </Button>
-              </div>
+              </div> */}
 
               <div className="text-sm text-center">
                 Already have an account?{" "}

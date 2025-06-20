@@ -16,7 +16,7 @@ export function Header() {
   }, [])
 
   const navigation = [
-    { name: "Home", href: "/" },
+    { name: "Home", href: "/home" },
     { name: "Flights", href: "/flights" },
     { name: "Destinations", href: "/destinations" },
     { name: "Support", href: "/support" },
@@ -24,15 +24,15 @@ export function Header() {
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+      <div className="container px-4 mx-auto">
+        <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <Plane className="h-6 w-6 text-blue-600" />
+            <Plane className="w-6 h-6 text-blue-600" />
             <span className="text-xl font-bold">Skyight</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="items-center hidden space-x-6 md:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -60,7 +60,7 @@ export function Header() {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="items-center hidden space-x-2 md:flex">
               <Link href="/auth/login">
                 <Button variant="ghost">Login</Button>
               </Link>
@@ -73,11 +73,11 @@ export function Header() {
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="md:hidden">
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
+                  <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
-                <div className="flex flex-col space-y-4 mt-8">
+                <div className="flex flex-col mt-8 space-y-4">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
@@ -90,12 +90,12 @@ export function Header() {
                   ))}
                   <div className="pt-4 border-t">
                     <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start">
+                      <Button variant="ghost" className="justify-start w-full">
                         Login
                       </Button>
                     </Link>
                     <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full justify-start mt-2">
+                      <Button className="justify-start w-full mt-2">
                         Sign Up
                       </Button>
                     </Link>

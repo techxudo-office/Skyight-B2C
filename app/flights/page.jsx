@@ -22,7 +22,7 @@ import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 // import { Slider } from "@/components/ui/slider";
-import FlightSearchSummary from "./FlightSearchSummary";
+import FlightSearchSummary from "./components/FlightSearchSummary";
 
 export default function FlightsPage() {
   const [sortBy, setSortBy] = useState("price");
