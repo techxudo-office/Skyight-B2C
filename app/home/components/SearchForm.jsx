@@ -12,8 +12,10 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useRouter } from "next/navigation";
 
 export default function SearchForm() {
+  const router = useRouter();
   const [tripType, setTripType] = useState("one-way");
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -39,13 +41,19 @@ export default function SearchForm() {
 
   const onSubmit = (data) => {
     if (tripType === "one-way") delete data.returnDate;
-    const passengers = `${data.adults}A/${data.children}C/${data.infants}I`;
-    const params = new URLSearchParams({
-      ...data,
+
+    const queryParams = new URLSearchParams({
+      from: data.from,
+      to: data.to,
+      departure: data.departure,
+      ...(tripType === "return" && { returnDate: data.returnDate }),
+      adults: data.adults.toString(),
+      children: data.children.toString(),
+      infants: data.infants.toString(),
       tripType,
-      passengers,
     });
-    window.location.href = `/flights?${params.toString()}`;
+
+    router.push(`/flights?${queryParams.toString()}`);
   };
 
   return (
@@ -58,7 +66,7 @@ export default function SearchForm() {
               type="single"
               value={tripType}
               onValueChange={(val) => setTripType(val || "one-way")}
-              variant="blue" // ← use new variant
+              variant="blue"
               size="default"
             >
               {["one-way", "return"].map((val) => (
