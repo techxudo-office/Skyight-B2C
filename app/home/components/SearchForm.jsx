@@ -1,23 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Plane, Users } from "lucide-react";
+import { Plane, Users } from "lucide-react";
 import { Counter } from "@/components/ui/counter";
+import { useRouter } from "next/navigation";
+import Dropdown from "@/components/ui/dropdown";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useRouter } from "next/navigation";
 
 export default function SearchForm() {
   const router = useRouter();
   const [tripType, setTripType] = useState("one-way");
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     register,
@@ -27,8 +33,8 @@ export default function SearchForm() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      from: "",
-      to: "",
+      from: null,
+      to: null,
       departure: "",
       returnDate: "",
       adults: 1,
@@ -36,15 +42,31 @@ export default function SearchForm() {
       infants: 0,
     },
   });
+  const { from, to, adults, children, infants } = watch();
 
-  const { adults, children, infants } = watch();
+  // Dummy cities
+  const cities = useMemo(
+    () => [
+      { value: "JFK", label: "New York (JFK)" },
+      { value: "CDG", label: "Paris (CDG)" },
+      { value: "LHR", label: "London (LHR)" },
+      { value: "HND", label: "Tokyo (HND)" },
+      { value: "DXB", label: "Dubai (DXB)" },
+    ],
+    []
+  );
+
+  // Ensure that form state stays in sync if you ever reset, etc.
+  useEffect(() => {
+    register("from", { required: "From is required" });
+    register("to", { required: "To is required" });
+  }, [register]);
 
   const onSubmit = (data) => {
     if (tripType === "one-way") delete data.returnDate;
-
-    const queryParams = new URLSearchParams({
-      from: data.from,
-      to: data.to,
+    const params = new URLSearchParams({
+      from: data.from.value,
+      to: data.to.value,
       departure: data.departure,
       ...(tripType === "return" && { returnDate: data.returnDate }),
       adults: data.adults.toString(),
@@ -52,8 +74,7 @@ export default function SearchForm() {
       infants: data.infants.toString(),
       tripType,
     });
-
-    router.push(`/flights?${queryParams.toString()}`);
+    router.push(`/flights?${params.toString()}`);
   };
 
   return (
@@ -80,7 +101,7 @@ export default function SearchForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="flex items-center space-x-2"
+                    className="flex items-center w-full space-x-2 sm:w-auto"
                   >
                     <Users className="w-4 h-4" />
                     <span>
@@ -88,12 +109,11 @@ export default function SearchForm() {
                     </span>
                   </Button>
                 </PopoverTrigger>
-
                 <PopoverContent
                   side="bottom"
                   align="start"
                   sideOffset={8}
-                  className="w-52"
+                  className="w-full sm:w-52"
                 >
                   <Counter
                     label="Adults"
@@ -120,43 +140,47 @@ export default function SearchForm() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             {/* From */}
-            <div className="space-y-2">
+            <div className="col-span-2 space-y-2 md:col-span-1 lg:col-span-1">
               <label className="text-sm font-medium text-muted-foreground">
                 From
               </label>
-              <div className="relative">
-                <MapPin className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
-                <Input
-                  className="pl-10"
+              {mounted && (
+                <Dropdown
+                  options={cities}
+                  value={from}
+                  onChange={(val) =>
+                    setValue("from", val, { shouldValidate: true })
+                  }
                   placeholder="Departure city"
-                  {...register("from", { required: "From is required" })}
                 />
-              </div>
+              )}
               {errors.from && (
                 <p className="text-sm text-red-500">{errors.from.message}</p>
               )}
             </div>
 
             {/* To */}
-            <div className="space-y-2">
+            <div className="col-span-2 space-y-2 md:col-span-1 lg:col-span-1">
               <label className="text-sm font-medium text-muted-foreground">
                 To
               </label>
-              <div className="relative">
-                <MapPin className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
-                <Input
-                  className="pl-10"
+              {mounted && (
+                <Dropdown
+                  options={cities}
+                  value={to}
+                  onChange={(val) =>
+                    setValue("to", val, { shouldValidate: true })
+                  }
                   placeholder="Destination city"
-                  {...register("to", { required: "To is required" })}
                 />
-              </div>
+              )}
               {errors.to && (
                 <p className="text-sm text-red-500">{errors.to.message}</p>
               )}
             </div>
 
             {/* Departure */}
-            <div className="space-y-2">
+            <div className="col-span-2 space-y-2 md:col-span-1 lg:col-span-1">
               <label className="text-sm font-medium text-muted-foreground">
                 Departure
               </label>
@@ -175,7 +199,7 @@ export default function SearchForm() {
 
             {/* Return */}
             {tripType === "return" && (
-              <div className="space-y-2">
+              <div className="col-span-2 space-y-2 md:col-span-1 lg:col-span-1">
                 <label className="text-sm font-medium text-muted-foreground">
                   Return
                 </label>
@@ -194,7 +218,7 @@ export default function SearchForm() {
             )}
 
             {/* Submit */}
-            <div className="flex items-end">
+            <div className="flex items-end col-span-2 md:col-span-2 lg:col-span-1">
               <Button
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700"
