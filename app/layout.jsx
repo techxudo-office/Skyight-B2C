@@ -2,10 +2,10 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
-import { store } from "../_core/store/store";
+import { store, persistor } from "../_core/store/store";
 import { ThemeProvider } from "../components/theme-provider";
-import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { PersistGate } from "redux-persist/integration/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,30 +17,29 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    console.log("CICD TEST 6.1");
-  }, []);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Provider store={store}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: { borderRadius: "8px", fontSize: "14px" },
-                success: { icon: "✅" },
-                error: { icon: "❌" },
-              }}
-            />
-          </ThemeProvider>
+          <PersistGate loading={null} persistor={persistor}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: { borderRadius: "8px", fontSize: "14px" },
+                  success: { icon: "✅" },
+                  error: { icon: "❌" },
+                }}
+              />
+            </ThemeProvider>
+          </PersistGate>
         </Provider>
       </body>
     </html>

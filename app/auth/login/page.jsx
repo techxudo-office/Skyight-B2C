@@ -123,7 +123,7 @@ export default function LoginPage() {
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? <Loader /> : "Create Account"}
+                  {isLoading ? <Loader /> : "Login"}
                 </Button>
               </form>
 

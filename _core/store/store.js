@@ -1,23 +1,27 @@
-"use client";
+// src/_core/store/store.ts
 import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "../reducer/rootReducer"; // Import the combined reducer
+import rootReducer from "../reducer/rootReducer";
 import {
-  PURGE,
   FLUSH,
   REHYDRATE,
   PAUSE,
   PERSIST,
+  PURGE,
   REGISTER,
 } from "redux-persist";
+import { persistStore } from "redux-persist";
 
-const store = configureStore({
-  reducer: rootReducer, // No global persist wrapper
+export const store = configureStore({
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
+      serializableCheck: {
+        // ignore redux-persist actions
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
       immutableCheck: false,
-      serializableCheck: false, // Still disable for redux-persist
-      ignoredActions: [PURGE, FLUSH, REHYDRATE, PAUSE, PERSIST, REGISTER],
     }),
 });
 
-export { store };
+// **CREATE the persistor** from the store
+export const persistor = persistStore(store);

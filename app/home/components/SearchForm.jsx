@@ -8,12 +8,12 @@ import { Plane, Users } from "lucide-react";
 import { Counter } from "@/components/ui/counter";
 import { useRouter } from "next/navigation";
 import Dropdown from "@/components/ui/dropdown";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
 } from "@/components/ui/popover";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function SearchForm() {
   const router = useRouter();

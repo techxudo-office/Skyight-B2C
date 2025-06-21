@@ -19,8 +19,14 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { trendingDestinations } from "@/data/data";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function HomePage() {
+  const { userData } = useSelector((state) => state.persist);
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
   const {
     register,
     handleSubmit,

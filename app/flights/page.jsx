@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -22,6 +22,9 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import FlightSearchSummary from "./components/FlightSearchSummary";
 import FilterSidebar from "./components/FilterSidebar";
+import { useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { searchFlight } from "@/_core/features/bookingSlice";
 
 export default function FlightsPage() {
   const [sortBy, setSortBy] = useState("price");
@@ -73,6 +76,42 @@ export default function FlightsPage() {
 
   const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
   const stopOptions = ["Non-stop", "1 stop", "2+ stops"];
+  const params = useSearchParams();
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.persist);
+
+  useEffect(() => {
+    // 1) read & validate query params
+    const from = params.get("from");
+    const to = params.get("to");
+    const departure = params.get("departure");
+    const returnDate = params.get("returnDate");
+    const tripType = params.get("tripType") || "one-way";
+    const adults = Number(params.get("adults") || "1");
+    const children = Number(params.get("children") || "0");
+    const infants = Number(params.get("infants") || "0");
+    
+    if (!from || !to || !departure) {
+      console.error("Missing required search parameters");
+      return;
+    }
+
+    // 2) shape the payload for your thunk
+    const payload = {
+      tripType: tripType === "one-way" ? "OneWay" : "Return",
+      originCode: from,
+      destinationCode: to,
+      departureDate: departure,
+      returnDate: returnDate || undefined,
+      adult: adults,
+      child: children,
+      infant: infants,
+    };
+
+    // 3) dispatch the searchFlight thunk
+    console.log("APi Call")
+    dispatch(searchFlight({ payload, token: userData?.token }));
+  }, [dispatch, params, userData?.token]);
 
   const handleAirlineChange = (airline, checked) => {
     if (checked) {

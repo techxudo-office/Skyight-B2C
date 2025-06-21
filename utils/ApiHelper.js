@@ -30,7 +30,7 @@ const makeRequest = async (
       url: endpoint,
       ...(data && { data }),
       headers: {
-        ...(token ? { Authorization: token } : {}),
+        ...(token ? { Authorization: token, secrettoken: token } : {}),
         ...headers,
       },
     };
