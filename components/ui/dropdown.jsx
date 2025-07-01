@@ -49,21 +49,35 @@ const customStyles = {
 };
 
 export default function Dropdown({
-  options = [],
   value,
+  disabled,
   onChange,
+  options = [],
   placeholder = "Select…",
   isClearable = false,
   styles = {},
+  ensureUnique = true,
   ...props
 }) {
+  const processedOptions = ensureUnique
+    ? Array.from(
+        options
+          .reduce((map, option) => {
+            // only keep the first option for each distinct value
+            if (!map.has(option.value)) map.set(option.value, option);
+            return map;
+          }, new Map())
+          .values()
+      )
+    : options;
   return (
     <ReactSelect
-      options={options}
       value={value}
       onChange={onChange}
+      isDisabled={disabled}
       placeholder={placeholder}
       isClearable={isClearable}
+      options={processedOptions}
       styles={{ ...customStyles, ...styles }}
       className="text-sm"
       classNamePrefix="rs"

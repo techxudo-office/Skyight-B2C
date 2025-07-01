@@ -2,11 +2,13 @@
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
-import persistReducerSlice from "../features/persistSlice";
+import persistSlice from "../features/persistSlice";
+import bookingSlice from "../features/bookingSlice";
 
 // Combine your reducers
 const appReducer = combineReducers({
-  persist: persistReducerSlice,
+  persist: persistSlice,
+  booking: bookingSlice,
 });
 
 // Handle logout reset

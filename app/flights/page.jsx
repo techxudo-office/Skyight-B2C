@@ -26,12 +26,6 @@ import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { searchFlight } from "@/_core/features/bookingSlice";
 
-export default function FlightsPage() {
-  const [sortBy, setSortBy] = useState("price");
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [selectedAirlines, setSelectedAirlines] = useState([]);
-  const [selectedStops, setSelectedStops] = useState([]);
-
   const flights = [
     {
       id: 1,
@@ -74,11 +68,17 @@ export default function FlightsPage() {
     },
   ];
 
-  const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
-  const stopOptions = ["Non-stop", "1 stop", "2+ stops"];
-  const params = useSearchParams();
+export default function FlightsPage() {
   const dispatch = useDispatch();
+  const params = useSearchParams();
+  const [sortBy, setSortBy] = useState("price");
+  const [selectedStops, setSelectedStops] = useState([]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const { userData } = useSelector((state) => state.persist);
+  const [selectedAirlines, setSelectedAirlines] = useState([]);
+
+  const stopOptions = ["Non-stop", "1 stop", "2+ stops"];
+  const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
 
   useEffect(() => {
     // 1) read & validate query params
@@ -104,8 +104,6 @@ export default function FlightsPage() {
       infant: infants,
     };
 
-    // 3) dispatch the searchFlight thunk
-    console.log("APi Call")
     dispatch(searchFlight({ payload, token: userData?.token }));
   }, [dispatch, params, userData?.token]);
 

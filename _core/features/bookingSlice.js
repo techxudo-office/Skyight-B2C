@@ -4,7 +4,39 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   searchResults: [],
   isLoadingSearchResults: false,
+
+  routes: [],
+  loadingRoutes: false,
 };
+
+const persistSlice = createSlice({
+  name: "booking",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(searchFlight.pending, (state) => {
+        state.isLoadingSearchResults = true;
+      })
+      .addCase(searchFlight.fulfilled, (state, action) => {
+        state.isLoadingSearchResults = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchFlight.rejected, (state, action) => {
+        state.isLoadingSearchResults = false;
+      })
+      .addCase(getRoutes.pending, (state) => {
+        state.loadingRoutes = true;
+      })
+      .addCase(getRoutes.fulfilled, (state, action) => {
+        state.loadingRoutes = false;
+        state.routes = action.payload;
+      })
+      .addCase(getRoutes.rejected, (state, action) => {
+        state.loadingRoutes = false;
+      })
+  },
+});
 
 // Search Flight
 export const searchFlight = createAsyncThunk(
@@ -51,23 +83,15 @@ export const searchFlight = createAsyncThunk(
   }
 );
 
-const persistSlice = createSlice({
-  name: "booking",
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(searchFlight.pending, (state) => {
-        state.isLoadingSearchResults = true;
-      })
-      .addCase(searchFlight.fulfilled, (state, action) => {
-        state.isLoadingSearchResults = false;
-        state.searchResults = action.payload;
-      })
-      .addCase(searchFlight.rejected, (state, action) => {
-        state.isLoadingSearchResults = false;
-      });
-  },
-});
+// Get Routes
+export const getRoutes = createAsyncThunk(
+  "booking/getRoutes",
+  ({ token, logoutHandler }) =>
+    makeRequest("get", "/api/booking-all-active-routes", { 
+      token,
+      logoutCallback: logoutHandler,
+      showNoErrors: true,
+    }).then((response) => response.Routes || [])
+);
 
 export default persistSlice.reducer;

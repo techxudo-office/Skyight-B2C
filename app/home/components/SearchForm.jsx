@@ -9,17 +9,23 @@ import { Counter } from "@/components/ui/counter";
 import { useRouter } from "next/navigation";
 import Dropdown from "@/components/ui/dropdown";
 import {
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useDispatch, useSelector } from "react-redux";
+import { getRoutes } from "@/_core/features/bookingSlice";
+
 
 export default function SearchForm() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [mounted, setMounted] = useState(false);
   const [tripType, setTripType] = useState("one-way");
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const { userData } = useSelector((state) => state.persist);
+  const { routes, loadingRoutes } = useSelector((state) => state.booking);
 
   useEffect(() => {
     setMounted(true);
@@ -30,6 +36,7 @@ export default function SearchForm() {
     handleSubmit,
     watch,
     setValue,
+    resetField,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -44,23 +51,21 @@ export default function SearchForm() {
   });
   const { from, to, adults, children, infants } = watch();
 
-  // Dummy cities
-  const cities = useMemo(
-    () => [
-      { value: "JFK", label: "New York (JFK)" },
-      { value: "CDG", label: "Paris (CDG)" },
-      { value: "LHR", label: "London (LHR)" },
-      { value: "HND", label: "Tokyo (HND)" },
-      { value: "DXB", label: "Dubai (DXB)" },
-    ],
-    []
-  );
-
   // Ensure that form state stays in sync if you ever reset, etc.
   useEffect(() => {
     register("from", { required: "From is required" });
     register("to", { required: "To is required" });
   }, [register]);
+
+  useEffect(() => {
+    if (userData?.token) {
+      dispatch(getRoutes({ token: userData?.token }))
+        .unwrap()
+        .catch(() => {
+          dispatch(getRoutes({ token: userData?.token }));
+        });
+    }
+  }, [dispatch, userData]);
 
   const onSubmit = (data) => {
     if (tripType === "one-way") delete data.returnDate;
@@ -76,6 +81,10 @@ export default function SearchForm() {
     });
     router.push(`/flights?${params.toString()}`);
   };
+
+  useEffect(() => {
+    console.log(from, to, "From To");
+  }, [from, to]);
 
   return (
     <Card className="max-w-4xl mx-auto">
@@ -146,11 +155,15 @@ export default function SearchForm() {
               </label>
               {mounted && (
                 <Dropdown
-                  options={cities}
                   value={from}
-                  onChange={(val) =>
-                    setValue("from", val, { shouldValidate: true })
-                  }
+                  options={routes.map((r) => ({
+                    value: r.Origin,
+                    label: r.Origin,
+                  }))}
+                  onChange={(val) => {
+                    resetField("to");
+                    setValue("from", val, { shouldValidate: true });
+                  }}
                   placeholder="Departure city"
                 />
               )}
@@ -166,8 +179,14 @@ export default function SearchForm() {
               </label>
               {mounted && (
                 <Dropdown
-                  options={cities}
                   value={to}
+                  disabled={!from}
+                  options={routes
+                    ?.filter(({ Origin }) => Origin === from?.value)
+                    .map(({ Destination }) => ({
+                      value: Destination,
+                      label: Destination,
+                    }))}
                   onChange={(val) =>
                     setValue("to", val, { shouldValidate: true })
                   }
