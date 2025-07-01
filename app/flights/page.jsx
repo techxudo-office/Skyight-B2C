@@ -91,10 +91,6 @@ export default function FlightsPage() {
     const children = Number(params.get("children") || "0");
     const infants = Number(params.get("infants") || "0");
     
-    if (!from || !to || !departure) {
-      console.error("Missing required search parameters");
-      return;
-    }
 
     // 2) shape the payload for your thunk
     const payload = {

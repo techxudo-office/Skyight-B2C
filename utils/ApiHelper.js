@@ -15,13 +15,13 @@ const makeRequest = async (
   method,
   endpoint,
   {
-    data = null,
     token = "",
+    data = null,
     headers = {},
-    successMessage = "",
     errorMessage = "",
-    logoutCallback = () => {},
+    successMessage = "",
     showNoErrors = false,
+    logoutCallback = () => {},
   }
 ) => {
   try {

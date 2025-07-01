@@ -28,16 +28,8 @@ export default function RootLayout({ children }) {
               enableSystem
               disableTransitionOnChange
             >
+              <Toaster />
               {children}
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  duration: 4000,
-                  style: { borderRadius: "8px", fontSize: "14px" },
-                  success: { icon: "✅" },
-                  error: { icon: "❌" },
-                }}
-              />
             </ThemeProvider>
           </PersistGate>
         </Provider>
