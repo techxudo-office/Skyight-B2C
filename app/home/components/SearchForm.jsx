@@ -82,10 +82,6 @@ export default function SearchForm() {
     router.push(`/flights?${params.toString()}`);
   };
 
-  useEffect(() => {
-    console.log(from, to, "From To");
-  }, [from, to]);
-
   return (
     <Card className="max-w-4xl mx-auto">
       <CardContent className="p-6">

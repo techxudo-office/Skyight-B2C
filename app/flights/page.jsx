@@ -24,7 +24,7 @@ import FlightSearchSummary from "./components/FlightSearchSummary";
 import FilterSidebar from "./components/FilterSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { searchFlight } from "@/_core/features/bookingSlice";
+import { searchFlight } from "@/_core/features/persistSlice";
 
 export default function FlightsPage() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function FlightsPage() {
   const { userData } = useSelector((state) => state.persist);
   const [selectedAirlines, setSelectedAirlines] = useState([]);
   const { searchResults, isLoadingSearchResults } = useSelector(
-    (state) => state.booking
+    (state) => state.persist
   );
 
   const from = params.get("from");
@@ -108,7 +108,7 @@ export default function FlightsPage() {
   }, [searchResults]);
 
   // 2) Map it into a “flights” array:
-  const flights = searchResults.map((itin, idx) => {
+  const flights = searchResults?.map((itin, idx) => {
     // grab the first OD option and the first segment in it
     const segment =
       itin.AirItinerary.OriginDestinationOptions[0].FlightSegment[0];
@@ -197,7 +197,7 @@ export default function FlightsPage() {
             {/* Sort and Filter Controls */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-muted-foreground">
-                {flights.length} flights found
+                {flights?.length} flights found
               </p>
 
               <div className="flex items-center gap-4">
@@ -235,7 +235,7 @@ export default function FlightsPage() {
 
             {/* Flight Results */}
             <div className="space-y-4">
-              {flights.map((flight) => (
+              {flights?.map((flight) => (
                 <Card
                   key={flight.id}
                   className="transition-shadow hover:shadow-md"
