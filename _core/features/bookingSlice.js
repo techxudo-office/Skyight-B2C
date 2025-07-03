@@ -63,7 +63,6 @@ export const searchFlight = createAsyncThunk(
         destination_location_code: payload.originCode,
       });
     }
-    console.log("Before makeRequest");
 
     return makeRequest("post", "/api/search", {
       data: requestBody,
@@ -77,8 +76,7 @@ export const searchFlight = createAsyncThunk(
       ) {
         throw new Error("No Flight Found!");
       }
-      console.log(response);
-      return response;
+      return response?.PricedItineraries?.PricedItinerary;
     });
   }
 );
@@ -87,7 +85,7 @@ export const searchFlight = createAsyncThunk(
 export const getRoutes = createAsyncThunk(
   "booking/getRoutes",
   ({ token, logoutHandler }) =>
-    makeRequest("get", "/api/booking-all-active-routes", { 
+    makeRequest("get", "/api/booking-all-active-routes", {
       token,
       logoutCallback: logoutHandler,
       showNoErrors: true,
