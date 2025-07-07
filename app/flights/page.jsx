@@ -17,14 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import FlightSearchSummary from "./components/FlightSearchSummary";
+import { useDispatch, useSelector } from "react-redux";
 import FilterSidebar from "./components/FilterSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 import { searchFlight } from "@/_core/features/persistSlice";
+import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
+import FlightSearchSummary from "./components/FlightSearchSummary";
 
 export default function FlightsPage() {
   const router = useRouter();
@@ -47,7 +47,7 @@ export default function FlightsPage() {
   const adults = Number(params.get("adults") || "1");
   const children = Number(params.get("children") || "0");
   const infants = Number(params.get("infants") || "0");
-  
+
   const stopOptions = ["Non-stop", "1 stop", "2+ stops"];
   const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
 
@@ -59,7 +59,6 @@ export default function FlightsPage() {
 
   useEffect(() => {
     if (!from || !to || !departure) return;
-    // 2) shape the payload for your thunk
     const payload = {
       tripType: tripType === "one-way" ? "OneWay" : "Return",
       originCode: from,
@@ -102,10 +101,6 @@ export default function FlightsPage() {
         return null;
     }
   };
-
-  useEffect(() => {
-    console.log(searchResults, "searchResults");
-  }, [searchResults]);
 
   // 2) Map it into a “flights” array:
   const flights = searchResults?.map((itin, idx) => {
@@ -325,7 +320,13 @@ export default function FlightsPage() {
                         ))}
                       </div>
 
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          router.push(`/flight-details?${params.toString()}`);
+                        }}
+                      >
                         View Details
                       </Button>
                     </div>

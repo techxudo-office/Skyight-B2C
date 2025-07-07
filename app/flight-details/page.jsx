@@ -27,8 +27,8 @@ const FlightDetailsPage = () => {
   }
 
   const data = searchResults[0];
-  const segment = data.AirItinerary.OriginDestinationOptions[0].FlightSegment[0];
   const breakdowns = data.AirItineraryPricingInfo.PTC_FareBreakdowns;
+  const segment = data.AirItinerary.OriginDestinationOptions[0].FlightSegment[0];
 
   const flight = {
     number: segment.FlightNumber,
