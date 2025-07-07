@@ -9,8 +9,12 @@ import { Plane, Luggage, Ticket } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const FlightDetailsPage = () => {
+  const router = useRouter();
+  const params = useSearchParams();
   const { searchResults } = useSelector((state) => state.persist);
 
   if (!searchResults || !searchResults[0]) {
@@ -19,7 +23,9 @@ const FlightDetailsPage = () => {
         <Header />
         <div className="container px-4 py-8 mx-auto text-center">
           <h1 className="text-xl font-semibold">Flight Details</h1>
-          <p className="mt-4 text-sm text-muted-foreground">No flight data available.</p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            No flight data available.
+          </p>
         </div>
         <Footer />
       </div>
@@ -28,7 +34,8 @@ const FlightDetailsPage = () => {
 
   const data = searchResults[0];
   const breakdowns = data.AirItineraryPricingInfo.PTC_FareBreakdowns;
-  const segment = data.AirItinerary.OriginDestinationOptions[0].FlightSegment[0];
+  const segment =
+    data.AirItinerary.OriginDestinationOptions[0].FlightSegment[0];
 
   const flight = {
     number: segment.FlightNumber,
@@ -46,11 +53,21 @@ const FlightDetailsPage = () => {
     },
     duration: segment.FlightDuration.replace(":", "h ") + "m",
     baggage: segment.FreeBaggages.map((b) => ({
-      type: b.PassengerType === "ADL" ? "Adult" : b.PassengerType === "CHD" ? "Child" : "Infant",
+      type:
+        b.PassengerType === "ADL"
+          ? "Adult"
+          : b.PassengerType === "CHD"
+          ? "Child"
+          : "Infant",
       weight: `${b.Quantity}${b.Unit}`,
     })),
     fares: breakdowns.map((f) => ({
-      type: f.PassengerTypeQuantity.Code === "ADL" ? "Adult" : f.PassengerTypeQuantity.Code === "CHD" ? "Child" : "Infant",
+      type:
+        f.PassengerTypeQuantity.Code === "ADL"
+          ? "Adult"
+          : f.PassengerTypeQuantity.Code === "CHD"
+          ? "Child"
+          : "Infant",
       quantity: f.PassengerTypeQuantity.Quantity,
       base: f.PassengerFare.BaseFare.pkrBaseFare,
       tax: f.PassengerFare.Taxes.Tax.reduce((sum, t) => sum + t.pkrTax, 0),
@@ -62,7 +79,20 @@ const FlightDetailsPage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-background">
       <Header />
       <main className="container px-4 py-8 mx-auto">
-        <h1 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">Flight Details</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Flight Details
+          </h1>
+          <Button
+            // variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push(`/confirm-booking?${params.toString()}`);
+            }}
+          >
+            Continue booking
+          </Button>
+        </div>
 
         {/* Itinerary Card */}
         <Card className="mb-6">
@@ -81,7 +111,9 @@ const FlightDetailsPage = () => {
               {/* Departure */}
               <div className="text-center md:text-left">
                 <p className="text-2xl font-bold">{flight.departure.code}</p>
-                <p className="text-sm text-muted-foreground">{flight.departure.city}</p>
+                <p className="text-sm text-muted-foreground">
+                  {flight.departure.city}
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {dayjs(flight.departure.time).format("MMM D, YYYY HH:mm")}
                 </p>
@@ -97,7 +129,9 @@ const FlightDetailsPage = () => {
               {/* Arrival */}
               <div className="text-center md:text-right">
                 <p className="text-2xl font-bold">{flight.arrival.code}</p>
-                <p className="text-sm text-muted-foreground">{flight.arrival.city}</p>
+                <p className="text-sm text-muted-foreground">
+                  {flight.arrival.city}
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {dayjs(flight.arrival.time).format("MMM D, YYYY HH:mm")}
                 </p>
@@ -126,7 +160,9 @@ const FlightDetailsPage = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No info available.</p>
+                <p className="text-sm text-muted-foreground">
+                  No info available.
+                </p>
               )}
             </CardContent>
           </Card>

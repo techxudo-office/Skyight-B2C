@@ -13,7 +13,11 @@ const initialState = {
 const persistSlice = createSlice({
   name: "persist",
   initialState,
-  reducers: {},
+  reducers: {
+    clearSearchResults: (state) => {
+      state.searchResults = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -92,4 +96,5 @@ export const searchFlight = createAsyncThunk(
   }
 );
 
+export const { clearSearchResults } = persistSlice.actions;
 export default persistSlice.reducer;
