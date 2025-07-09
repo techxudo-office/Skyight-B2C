@@ -1,86 +1,337 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import dayjs from "dayjs";
 import {
-  MultiStepForm,
-  MultiStepFormContextProvider,
-  MultiStepFormHeader,
-  MultiStepFormStep,
-  Stepper,
-  createStepSchema,
-} from "@/components/ui/multi-step-form";
-import PaymentStep from "./components/PaymentStep";
-import BookingStep from "./components/BookingStep";
-import TravellerInfoStep from "./components/TravellerInfoStep";
-
-const FormSchema = createStepSchema({
-  account: z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
-  }),
-  profile: z.object({
-    password: z.string().min(8),
-    age: z.coerce.number().min(18),
-  }),
-});
+  visitVisa_section,
+  progressSteps,
+} from "./components/VisitVisaConstant";
+import { City } from "country-state-city";
+import ProgressBar from "./components/ProgressBar";
+import { Input } from "@/components/ui/input";
+import Dropdown from "@/components/ui/dropdown";
 
 export default function ConfirmBookingPage() {
-  const form = useForm({
-    resolver: zodResolver(FormSchema),
+  const [currentSection, setCurrentSection] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Initialize React Hook Form
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+    watch,
+    setValue,
+  } = useForm({
+    mode: "onChange",
     defaultValues: {
-      account: {
-        username: "",
-        email: "",
-      },
-      profile: {
-        password: "",
-        age: 0,
-      },
+      // Personal Information
+      full_name: "",
+      gender: "",
+      date_of_birth: dayjs().format("YYYY-MM-DD"),
+      nationality: "",
+      passport_number: "",
+      passport_expiry_date: dayjs().format("YYYY-MM-DD"),
+      // Contact Details
+      email_address: "",
+      phone_number: "",
+      permanent_address: "",
+      current_address: "",
+      // Employment Details
+      current_employment_status: "",
+      employer_name: "",
+      job_title: "",
+      work_address: "",
+      monthly_income: "",
     },
-    reValidateMode: "onBlur",
-    mode: "onBlur",
   });
 
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
+  // Get field names for current section
+  const getCurrentSectionFields = () => {
+    return visitVisa_section[currentSection].fields.map((field) => field.name);
   };
 
+  // Validation rules generator
+  const getValidationRules = (field) => {
+    const rules = {};
+
+    if (field.required) {
+      rules.required = `${field.label} is required`;
+    }
+
+    if (field.type === "email") {
+      rules.pattern = {
+        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+        message: "Invalid email address",
+      };
+    }
+
+    if (field.type === "tel") {
+      rules.pattern = {
+        value: /^[+]?[0-9\s\-\(\)]+$/,
+        message: "Invalid phone number",
+      };
+    }
+
+    if (field.validation) {
+      if (field.validation.min) {
+        rules.minLength = {
+          value: field.validation.min,
+          message:
+            field.validation.message ||
+            `Minimum ${field.validation.min} characters required`,
+        };
+      }
+      if (field.validation.max) {
+        rules.maxLength = {
+          value: field.validation.max,
+          message:
+            field.validation.message ||
+            `Maximum ${field.validation.max} characters allowed`,
+        };
+      }
+    }
+
+    // Custom validation for passport expiry date
+    if (field.name === "passport_expiry_date") {
+      rules.validate = (value) => {
+        const today = dayjs();
+        const expiryDate = dayjs(value);
+        if (expiryDate.isBefore(today)) {
+          return "Passport expiry date must be in the future";
+        }
+        return true;
+      };
+    }
+
+    // Custom validation for date of birth
+    if (field.name === "date_of_birth") {
+      rules.validate = (value) => {
+        const today = dayjs();
+        const birthDate = dayjs(value);
+        const age = today.diff(birthDate, "years");
+        if (age < 18) {
+          return "You must be at least 18 years old";
+        }
+        if (age > 120) {
+          return "Please enter a valid date of birth";
+        }
+        return true;
+      };
+    }
+
+    return rules;
+  };
+
+  // Validate current section
+  const validateCurrentSection = async () => {
+    const currentFields = getCurrentSectionFields();
+    const result = await trigger(currentFields);
+    return result;
+  };
+
+  const handleNextSection = async () => {
+    console.log("handle Next Section called");
+    const isValid = await validateCurrentSection();
+    if (isValid) {
+      setCurrentSection((prev) =>
+        Math.min(prev + 1, visitVisa_section.length - 1)
+      );
+    }
+  };
+
+  const handlePreviousSection = () => {
+    setCurrentSection((prev) => Math.max(prev - 1, 0));
+  };
+
+  const onSubmit = async (data) => {
+    console.log(data, "Data submitted");
+  };
+
+  // Custom input change handler for controlled components
+  const handleInputChange = (field) => (e, validation) => {
+    const value = e.target.value;
+    setValue(field, value, { shouldValidate: true });
+  };
+
+  // Watch all form values for getting current values
+  // 1️⃣ Watch the country field
+  const selectedCountry = watch("country");
+
+  // 2️⃣ Local state for cities
+  const [cityOptions, setCityOptions] = useState([]);
+
+  // 3️⃣ Update cities whenever countryChanges
+  useEffect(() => {
+    if (selectedCountry) {
+      const cities = City.getCitiesOfCountry(selectedCountry).map((c) => ({
+        label: c.name,
+        value: c.name,
+      }));
+      setCityOptions(cities);
+      // clear any previously selected city
+      setValue("city", "", { shouldValidate: true });
+    } else {
+      setCityOptions([]);
+      setValue("city", "", { shouldValidate: true });
+    }
+  }, [selectedCountry, setValue]);
+
   return (
-    <MultiStepForm
-      className={"space-y-10 p-8 rounded-xl border"}
-      schema={FormSchema}
-      form={form}
-      onSubmit={onSubmit}
-    >
-      <MultiStepFormHeader
-        className={"flex w-full flex-col justify-center space-y-6"}
-      >
-        <h2 className={"text-xl font-bold"}>Create your account</h2>
+    <div className="w-full p-4 mx-auto shadow-lg md:p-14 bg-card text-foreground rounded-xl">
+      <h1 className="mb-2 text-3xl font-bold text-center">
+        Visit Visa Application
+      </h1>
+      <p className="mb-8 text-center text-muted-foreground">
+        Please fill in your details carefully
+      </p>
 
-        <MultiStepFormContextProvider>
-          {({ currentStepIndex }) => (
-            <Stepper
-              variant={"numbers"}
-              steps={["Account", "Profile", "Review"]}
-              currentStep={currentStepIndex}
-            />
-          )}
-        </MultiStepFormContextProvider>
-      </MultiStepFormHeader>
+      <ProgressBar currentStep={currentSection + 1} steps={progressSteps} />
 
-      <MultiStepFormStep name="account">
-        <TravellerInfoStep />
-      </MultiStepFormStep>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
+        <div
+          className="relative overflow-hidden"
+          style={{ minHeight: "600px" }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSection}
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="w-full"
+            >
+              <div className="p-6 border rounded-lg bg-background border-border">
+                <h3 className="px-3 py-2 mb-6 text-xl font-medium border-b border-muted">
+                  {visitVisa_section[currentSection].title}
+                </h3>
 
-      <MultiStepFormStep name="profile">
-        <PaymentStep />
-      </MultiStepFormStep>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {visitVisa_section[currentSection].fields.map((field) => {
+                    const Icon = field.icon;
 
-      <MultiStepFormStep name="review">
-        <BookingStep />
-      </MultiStepFormStep>
-    </MultiStepForm>
+                    // 4️⃣ If this is the city field, override its options
+                    const dropdownOptions =
+                      field.name === "city"
+                        ? cityOptions
+                        : field.options?.map((opt) =>
+                            typeof opt === "string"
+                              ? { label: opt, value: opt }
+                              : opt
+                          ) || [];
+
+                    return (
+                      <Controller
+                        key={field.name}
+                        name={field.name}
+                        control={control}
+                        rules={getValidationRules(field)}
+                        render={({ field: { onChange, value } }) => (
+                          <div className="flex flex-col gap-2">
+                            <label
+                              htmlFor={field.name}
+                              className="flex items-center gap-1 text-sm font-medium text-muted-foreground"
+                            >
+                              {Icon && (
+                                <Icon size={16} className="text-primary" />
+                              )}
+                              {field.label}
+                            </label>
+
+                            {field.type === "select" ? (
+                              <Dropdown
+                                value={
+                                  dropdownOptions.find(
+                                    (o) => o.value === value
+                                  ) || null
+                                }
+                                onChange={(opt) => onChange(opt?.value || "")}
+                                options={dropdownOptions}
+                                placeholder={`Select ${field.label}`}
+                                instanceId={field.name}
+                                disabled={
+                                  field.name === "city" && !selectedCountry
+                                }
+                              />
+                            ) : (
+                              <Input
+                                id={field.name}
+                                type={field.type}
+                                placeholder={field.label}
+                                {...register(
+                                  field.name,
+                                  getValidationRules(field)
+                                )}
+                                className={
+                                  errors[field.name]
+                                    ? "border-destructive focus:ring-destructive"
+                                    : ""
+                                }
+                              />
+                            )}
+
+                            {errors[field.name] && (
+                              <p className="text-sm text-destructive">
+                                {errors[field.name]?.message}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      />
+                    );
+                  })}
+                </div>
+
+                <div className="flex justify-between mt-6">
+                  {currentSection > 0 ? (
+                    <button
+                      type="button"
+                      onClick={handlePreviousSection}
+                      className="flex items-center px-4 py-1 transition-colors rounded-lg bg-muted hover:bg-muted/70 text-muted-foreground"
+                    >
+                      <ChevronLeft size={18} className="mr-2" />
+                      Previous
+                    </button>
+                  ) : (
+                    <div></div>
+                  )}
+
+                  {currentSection < visitVisa_section.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleNextSection}
+                      className="flex items-center px-4 py-1 ml-auto text-white transition-colors rounded-lg bg-primary hover:bg-primary/80"
+                    >
+                      Next Section
+                      <ChevronRight size={18} className="ml-2" />
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="flex items-center px-6 py-2 ml-auto text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div className="w-4 h-4 border-b-2 border-white rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          Submit Application
+                          <Circle className="ml-2" size={18} />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </form>
+    </div>
   );
 }
