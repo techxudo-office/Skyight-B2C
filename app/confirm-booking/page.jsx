@@ -1,21 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import {
   visitVisa_section,
   progressSteps,
 } from "./components/VisitVisaConstant";
 import { City } from "country-state-city";
-import ProgressBar from "./components/ProgressBar";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/ui/dropdown";
+import ProgressBar from "./components/ProgressBar";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 
 export default function ConfirmBookingPage() {
+  const [loading, setLoading] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize React Hook Form
   const {
@@ -26,6 +26,7 @@ export default function ConfirmBookingPage() {
     trigger,
     watch,
     setValue,
+    resetField,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -36,11 +37,8 @@ export default function ConfirmBookingPage() {
       nationality: "",
       passport_number: "",
       passport_expiry_date: dayjs().format("YYYY-MM-DD"),
-      // Contact Details
+      // Payment Details
       email_address: "",
-      phone_number: "",
-      permanent_address: "",
-      current_address: "",
       // Employment Details
       current_employment_status: "",
       employer_name: "",
@@ -152,23 +150,16 @@ export default function ConfirmBookingPage() {
     console.log(data, "Data submitted");
   };
 
-  // Custom input change handler for controlled components
-  const handleInputChange = (field) => (e, validation) => {
-    const value = e.target.value;
-    setValue(field, value, { shouldValidate: true });
-  };
-
-  // Watch all form values for getting current values
-  // 1️⃣ Watch the country field
-  const selectedCountry = watch("country");
+  // Watch all fields
+  const values = watch();
 
   // 2️⃣ Local state for cities
   const [cityOptions, setCityOptions] = useState([]);
 
   // 3️⃣ Update cities whenever countryChanges
   useEffect(() => {
-    if (selectedCountry) {
-      const cities = City.getCitiesOfCountry(selectedCountry).map((c) => ({
+    if (values.country) {
+      const cities = City.getCitiesOfCountry(values.country).map((c) => ({
         label: c.name,
         value: c.name,
       }));
@@ -179,7 +170,7 @@ export default function ConfirmBookingPage() {
       setCityOptions([]);
       setValue("city", "", { shouldValidate: true });
     }
-  }, [selectedCountry, setValue]);
+  }, [values.country, setValue]);
 
   return (
     <div className="w-full p-4 mx-auto shadow-lg md:p-14 bg-card text-foreground rounded-xl">
@@ -214,75 +205,68 @@ export default function ConfirmBookingPage() {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   {visitVisa_section[currentSection].fields.map((field) => {
                     const Icon = field.icon;
+                    const fieldValue = values[field.name];
 
-                    // 4️⃣ If this is the city field, override its options
+                    // Compute dropdownOptions (and override city via cityOptions if needed)
                     const dropdownOptions =
                       field.name === "city"
                         ? cityOptions
-                        : field.options?.map((opt) =>
+                        : (field.options ?? []).map((opt) =>
                             typeof opt === "string"
                               ? { label: opt, value: opt }
                               : opt
-                          ) || [];
+                          );
 
                     return (
-                      <Controller
-                        key={field.name}
-                        name={field.name}
-                        control={control}
-                        rules={getValidationRules(field)}
-                        render={({ field: { onChange, value } }) => (
-                          <div className="flex flex-col gap-2">
-                            <label
-                              htmlFor={field.name}
-                              className="flex items-center gap-1 text-sm font-medium text-muted-foreground"
-                            >
-                              {Icon && (
-                                <Icon size={16} className="text-primary" />
-                              )}
-                              {field.label}
-                            </label>
+                      <div key={field.name} className="flex flex-col gap-2">
+                        <label
+                          htmlFor={field.name}
+                          className="flex items-center gap-1 text-sm font-medium text-muted-foreground"
+                        >
+                          {Icon && <Icon size={16} className="text-primary" />}
+                          {field.label}
+                        </label>
 
-                            {field.type === "select" ? (
-                              <Dropdown
-                                value={
-                                  dropdownOptions.find(
-                                    (o) => o.value === value
-                                  ) || null
-                                }
-                                onChange={(opt) => onChange(opt?.value || "")}
-                                options={dropdownOptions}
-                                placeholder={`Select ${field.label}`}
-                                instanceId={field.name}
-                                disabled={
-                                  field.name === "city" && !selectedCountry
-                                }
-                              />
-                            ) : (
-                              <Input
-                                id={field.name}
-                                type={field.type}
-                                placeholder={field.label}
-                                {...register(
-                                  field.name,
-                                  getValidationRules(field)
-                                )}
-                                className={
-                                  errors[field.name]
-                                    ? "border-destructive focus:ring-destructive"
-                                    : ""
-                                }
-                              />
-                            )}
-
-                            {errors[field.name] && (
-                              <p className="text-sm text-destructive">
-                                {errors[field.name]?.message}
-                              </p>
-                            )}
-                          </div>
+                        {field.type === "select" ? (
+                          <Dropdown
+                            value={
+                              dropdownOptions.find(
+                                (o) => o.value === fieldValue
+                              ) ?? null
+                            }
+                            onChange={(opt) => {
+                              // update RHF
+                              setValue(field.name, opt?.value ?? "", {
+                                shouldValidate: true,
+                              });
+                              // if country changed, clear city
+                              if (field.name === "country") {
+                                resetField("city");
+                              }
+                            }}
+                            options={dropdownOptions}
+                            placeholder={`Select ${field.label}`}
+                            instanceId={field.name}
+                            disabled={field.name === "city" && !values.country}
+                          />
+                        ) : (
+                          <Input
+                            id={field.name}
+                            type={field.type}
+                            placeholder={field.label}
+                            {...register(field.name, getValidationRules(field))}
+                            className={
+                              errors[field.name] ? "border-destructive" : ""
+                            }
+                          />
                         )}
-                      />
+
+                        {errors[field.name] && (
+                          <p className="text-sm text-destructive">
+                            {errors[field.name].message}
+                          </p>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -314,9 +298,9 @@ export default function ConfirmBookingPage() {
                     <button
                       type="submit"
                       className="flex items-center px-6 py-2 ml-auto text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
-                      disabled={isSubmitting}
+                      disabled={loading}
                     >
-                      {isSubmitting ? (
+                      {loading ? (
                         <div className="w-4 h-4 border-b-2 border-white rounded-full animate-spin"></div>
                       ) : (
                         <>
