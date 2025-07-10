@@ -57,14 +57,14 @@ export const form_constants = [
       {
         name: "telephone",
         label: "Phone Number",
-        type: "number",
+        type: "phone",
         icon: Phone,
         required: true,
       },
       {
         name: "mobile",
         label: "Mobile Number",
-        type: "number",
+        type: "phone",
         icon: Phone,
         required: true,
       },

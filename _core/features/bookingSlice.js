@@ -4,6 +4,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   routes: [],
   loadingRoutes: false,
+
+  isBookingLoading: false,
+  bookingMessage: null,
 };
 
 const persistSlice = createSlice({
@@ -22,6 +25,16 @@ const persistSlice = createSlice({
       .addCase(getRoutes.rejected, (state, action) => {
         state.loadingRoutes = false;
       })
+      .addCase(confirmBooking.pending, (state) => {
+        state.isBookingLoading = true;
+      })
+      .addCase(confirmBooking.fulfilled, (state, action) => {
+        state.isBookingLoading = false;
+        state.bookingMessage = action.payload.message;
+      })
+      .addCase(confirmBooking.rejected, (state, action) => {
+        state.isBookingLoading = false;
+      })
   },
 });
 
@@ -35,6 +48,18 @@ export const getRoutes = createAsyncThunk(
       logoutCallback: logoutHandler,
       showNoErrors: true,
     }).then((response) => response.Routes || [])
+);
+
+// Confirm Booking
+export const confirmBooking = createAsyncThunk(
+  "booking/confirmBooking",
+  ({ data, token }) =>
+    makeRequest("post", "/api/booking", {
+      data,
+      token,
+      successMessage: "Booking created successfully",
+      errorMessage: "Failed to confirm booking",
+    }).then(() => ({ status: true, message: "Booking Created" }))
 );
 
 export default persistSlice.reducer;

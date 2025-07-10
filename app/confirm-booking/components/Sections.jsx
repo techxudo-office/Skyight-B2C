@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { useEffect, useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { form_constants } from "./FormConstants";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 export function TravellerSection({
   travellers,
@@ -100,6 +101,39 @@ export function FieldRenderer({
               onChange={(opt) => onChange(opt?.value ?? "")}
               placeholder={`Select ${field.label}`}
               className={error ? "ring-destructive" : ""}
+            />
+          )}
+        />
+      ) : field.type === "phone" ? (
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <PhoneInput
+              value={
+                value?.country_code
+                  ? `${value.country_code}${value.area_code || ""}${
+                      value.number
+                    }`
+                  : ""
+              }
+              onChange={(parsed) => {
+                // Example: parsed = "+923120824490"
+                if (!parsed) return onChange(null);
+
+                const match = parsed.match(/^\+(\d{1,3})(\d{3})(\d{6,})$/);
+                if (match) {
+                  const [, country_code, area_code, number] = match;
+                  onChange({
+                    country_code,
+                    area_code,
+                    number,
+                  });
+                } else {
+                  onChange(null); // fallback
+                }
+              }}
+              className={error ? "border-destructive" : ""}
             />
           )}
         />

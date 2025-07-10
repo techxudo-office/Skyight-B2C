@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
@@ -15,6 +15,9 @@ import {
   useTravellerDefs,
   usePopulateCities,
 } from "./components/Sections";
+import { useDispatch, useSelector } from "react-redux";
+import { confirmBooking } from "@/_core/features/bookingSlice";
+import { City } from "country-state-city";
 
 export default function ConfirmBookingPage() {
   const params = useSearchParams();
@@ -47,10 +50,31 @@ export default function ConfirmBookingPage() {
   });
 
   // populate city options per traveller
-  const travellerValues = watch("travellers");
-  const [cityOpts, setCityOpts] = useState(travellersDef.map(() => []));
-  usePopulateCities(travellerValues, setCityOpts, setValue);
+  // 1) watch the current travellers array
+  const travellerValues = watch("travellers"); // this is an array
 
+  // 2) derive just the country codes
+  const countryCodes = travellerValues.map((t) => t.country);
+
+  // 3) state for each traveller’s city list
+  const [cityOpts, setCityOpts] = useState(travellersDef.map(() => []));
+
+  // 4) whenever countryCodes changes, recompute cityOpts
+  useEffect(() => {
+    const newOpts = countryCodes.map((code) =>
+      code ? City.getCitiesOfCountry(code).map((c) => c.name) : []
+    );
+    setCityOpts(newOpts);
+  }, [countryCodes.join(",")]); // join() is enough to detect array changes
+
+  // 5) clear stale city values if country was cleared
+  useEffect(() => {
+    countryCodes.forEach((code, i) => {
+      if (!code) {
+        setValue(`travellers.${i}.city`, "");
+      }
+    });
+  }, [countryCodes.join(","), setValue]);
   // multi‑step
   const sections = [
     { title: "Traveller Details", fields: form_constants[0].fields },
@@ -70,7 +94,129 @@ export default function ConfirmBookingPage() {
     if (await trigger(names)) setStep((s) => Math.min(s + 1, total - 1));
   };
   const prev = () => setStep((s) => Math.max(s - 1, 0));
-  const onSubmit = (data) => console.log("Valid:", data);
+
+  const dispatch = useDispatch();
+  const { userData, searchResults } = useSelector((state) => state.persist);
+
+  useEffect(() => {
+    console.log(searchResults, "searchResults");
+  }, [searchResults]);
+
+  // Pull out pricing & itineraries
+  const pricing = searchResults[0]?.AirItineraryPricingInfo;
+  const itineraries = searchResults[0]?.AirItinerary?.OriginDestinationOptions;
+  const isRoundTrip = !params.get("tripType") === "one-way";
+
+  // Helper: flatten one segment + its parent into keys
+  const buildSegmentFields = (seg, parent, suffix = "") => ({
+    [`flight_duration${suffix}`]: seg.FlightDuration,
+    [`origin_location_code${suffix}`]: seg.DepartureAirport.LocationCode,
+    [`departure_terminal${suffix}`]: seg.DepartureAirport.Terminal || "", // optional terminal info
+    [`destination_location_code${suffix}`]: seg.ArrivalAirport.LocationCode,
+    [`arrival_terminal${suffix}`]: seg.ArrivalAirport.Terminal || "",
+    [`airline_code${suffix}`]: seg.OperatingAirline.Code,
+    [`air_equip_type${suffix}`]: seg.Equipment.AirEquipType,
+    [`departure_date_time${suffix}`]: seg.DepartureDateTime,
+    [`arrival_date_time${suffix}`]: seg.ArrivalDateTime,
+    [`departure_date${suffix}`]: seg.DepartureDate,
+    [`departure_time${suffix}`]: seg.DepartureTime,
+    [`arrival_date${suffix}`]: seg.ArrivalDate,
+    [`arrival_time${suffix}`]: seg.ArrivalTime,
+    [`flight_number${suffix}`]: seg.FlightNumber,
+    [`res_book_design_Code${suffix}`]: seg.ResBookDesigCode,
+    [`rph${suffix}`]: seg.RPH,
+    [`ref_number${suffix}`]: parent.RefNumber, // itinerary-level reference
+    [`direction_id${suffix}`]: parent.DirectionId, // 0 for outbound, 1 for return typically
+    [`elapsed_time${suffix}`]: parent.ElapsedTime,
+    [`free_baggages${suffix}`]: seg.FreeBaggages,
+    // Map booking class availabilities into simpler array objects
+    [`booking_class_avails${suffix}`]: seg.BookingClassAvails.map((item) => ({
+      available_PTC: item.AvailablePTC,
+      res_book_desig_code: item.ResBookDesigCode,
+      res_book_desig_quantity: item.ResBookDesigQuantity,
+      rph: item.RPH,
+      res_book_desig_cabin_code: item.ResBookDesigCabinCode,
+      fare_basis: item.FareBasis,
+    })),
+  });
+
+  // Helper: structure the pricing info
+  const buildPriceInfo = (pricing) => ({
+    itin_total_fare: {
+      base_fare: {
+        amount: pricing.ItinTotalFare.BaseFare.Amount,
+        currency_code: pricing.ItinTotalFare.BaseFare.CurrencyCode,
+        decimal_places: pricing.ItinTotalFare.BaseFare.DecimalPlaces,
+      },
+      total_equiv_fare: {
+        amount: pricing.ItinTotalFare.MarkupFare.Amount,
+        currency_code: pricing.ItinTotalFare.MarkupFare.CurrencyCode,
+        decimal_places: pricing.ItinTotalFare.MarkupFare.DecimalPlaces,
+      },
+      total_fare: {
+        amount: pricing.ItinTotalFare.TotalFare.Amount,
+        currency_code: pricing.ItinTotalFare.TotalFare.CurrencyCode,
+        decimal_places: pricing.ItinTotalFare.TotalFare.DecimalPlaces,
+      },
+    },
+    ptc_fare_break_downs: pricing.PTC_FareBreakdowns.map((pax) => ({
+      passenger_type_quantity: {
+        code: pax.PassengerTypeQuantity.Code,
+        quantity: pax.PassengerTypeQuantity.Quantity,
+      },
+      passenger_fare: {
+        base_fare: {
+          amount: pax.PassengerFare.BaseFare.Amount,
+          currency_code: pax.PassengerFare.BaseFare.CurrencyCode,
+          decimal_places: pax.PassengerFare.BaseFare.DecimalPlaces,
+        },
+        total_fare: {
+          amount: pax.PassengerFare.TotalFare.Amount,
+          currency_code: pax.PassengerFare.TotalFare.CurrencyCode,
+          decimal_places: pax.PassengerFare.TotalFare.DecimalPlaces,
+        },
+        fees: pax.PassengerFare.Fees,
+        taxes: pax.PassengerFare.Taxes.Tax.map((tax) => ({
+          name: tax.Name,
+          amount: tax.Amount,
+        })),
+      },
+    })),
+  });
+
+  // Final submission handler
+  const onSubmit = (formValues) => {
+    // formValues.travellers is your array of traveller objects
+    const outItin = itineraries[0];
+    const outSeg = outItin.FlightSegment[0];
+
+    let payload = {
+      ...buildSegmentFields(outSeg, outItin),
+      cabin_class: null,
+      trip_type: isRoundTrip ? "Return" : "OneWay",
+      travellers: formValues.travellers,
+      transaction_identifier: "",
+      priceInfo: buildPriceInfo(pricing),
+    };
+
+    if (isRoundTrip && itineraries.length > 1) {
+      const retItin = itineraries[1];
+      const retSeg = retItin.FlightSegment[0];
+      payload = {
+        ...payload,
+        ...buildSegmentFields(retSeg, retItin, "_return"),
+        cabin_class_return: null,
+      };
+    }
+
+    dispatch(confirmBooking({ data: payload, token: userData?.token }))
+      .unwrap()
+      .then(() => navigate("/dashboard/flight-bookings"))
+      .catch((err) => {
+        console.error("Booking failed", err);
+        // show toast or error UI here
+      });
+  };
 
   return (
     <div className="w-full p-4 mx-auto shadow-lg md:p-14 bg-card text-foreground rounded-xl">
