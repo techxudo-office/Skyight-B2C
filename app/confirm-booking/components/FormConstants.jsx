@@ -11,13 +11,14 @@ import {
   BookOpen,
   UserCircle2,
 } from "lucide-react";
-import { Country, City } from "country-state-city";
+import { Country } from "country-state-city";
 // Prepare list of country choices for phone code/ DOB fields
 const countries = Country.getAllCountries().map((country) => ({
   label: country.name,
   value: country.isoCode,
 }));
-export const visitVisa_section = [
+
+export const form_constants = [
   {
     title: "Personal Information",
     fields: [
