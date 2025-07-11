@@ -1,4 +1,4 @@
-name: Build, Push and Deploy B2C Image
+name: Build, Push and Deploy B2C App
 
 on:
   push:
@@ -6,9 +6,11 @@ on:
 
 jobs:
   build_and_push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -16,55 +18,44 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./DockerFile
+          file: ./Dockerfile # Make sure this points to the new Dockerfile
           push: true
           tags: connectazeeza/skight-frontend-b2c:latest
+          # Optional: Add build arguments for environment variables
+          # build-args: |
+          #   NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
   deploy:
+    name: Deploy to EC2
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2 and update static site
+      - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            # login to Docker Hub
+            # Login to Docker Hub on the EC2 instance
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            # clean up any previous temp container
-            docker rm -f tmp-extract-b2c 2>/dev/null || true
-
-            # pull & create new temp container
+            # Pull the latest image
             docker pull connectazeeza/skight-frontend-b2c:latest
-            docker create --name tmp-extract-b2c connectazeeza/skight-frontend-b2c:latest
 
-            DST=/home/ec2-user/Skyight-B2C/out
-            echo "Before update:"; ls -l $DST || echo "no folder yet"
+            # Stop and remove the old container if it exists
+            docker stop skyight-b2c-container 2>/dev/null || true
+            docker rm skyight-b2c-container 2>/dev/null || true
 
-            # replace static files
-            rm -rf $DST
-            docker cp tmp-extract-b2c:/usr/share/nginx/html $DST
+            # Run the new container from the new image
+            # -d: run in detached mode (in the background)
+            # -p 3000:3000: map port 3000 of the container to port 3000 on the host (EC2)
+            # --restart always: automatically restart the container if it crashes or the server reboots
+            # --name: give the container a specific name
+            docker run -d -p 3000:3000 --restart always --name skyight-b2c-container connectazeeza/skight-frontend-b2c:latest
 
-            echo "After update:"; ls -l $DST
-
-            # cleanup & set permissions
-            docker rm tmp-extract-b2c
-            sudo chown -R ec2-user:ec2-user $DST
-
-            echo "✅ Static site updated"
-
-      - name: Restart Nginx on EC2
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            sudo systemctl restart nginx && echo "Nginx restarted."
+            echo "✅ Deployment successful!"
