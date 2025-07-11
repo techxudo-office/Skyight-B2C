@@ -32,25 +32,26 @@ jobs:
       - name: SSH to EC2 and deploy container
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
+          # … your existing host / creds …
           script: |
-            # Log in to Docker Hub
+            # 1) Prune old Docker resources to free space
+            docker system prune -af --volumes || true
+
+            # 2) Login to Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" \
               | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # Stop & remove old container (if exists)
+            # 3) Stop & remove the old container
             docker rm -f skyight-b2c || true
 
-            # Pull the new image
-            docker pull connectazeeza/skyight-b2c:latest
+            # 4) Pull the new image
+            docker pull yourhubusername/skyight-b2c:latest
 
-            # Run new container on port 80 -> 3000
+            # 5) Run it
             docker run -d \
               --name skyight-b2c \
               -p 80:3000 \
               --restart unless-stopped \
-              connectazeeza/skyight-b2c:latest
+              yourhubusername/skyight-b2c:latest
 
             echo "✅ Deployed skyight-b2c container"
