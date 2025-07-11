@@ -52,8 +52,9 @@ jobs:
             # 5) Run it
             docker run -d \
               --name skyight-b2c \
-              -p 80:3000 \
+              -p 127.0.0.1:3000:3000 \
               --restart unless-stopped \
               connectazeeza/skyight-b2c:latest
+
 
             echo "✅ Deployed skyight-b2c container"
