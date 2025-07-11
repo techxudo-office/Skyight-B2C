@@ -202,6 +202,7 @@ export function defaultTraveller() {
     date_of_birth: dayjs().format("YYYY-MM-DD"),
     gender: "",
     passport_number: "",
+    doc_type: "P",
     passport_expiry_date: dayjs().format("YYYY-MM-DD"),
   };
 }

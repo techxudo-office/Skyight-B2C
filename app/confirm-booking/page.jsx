@@ -186,19 +186,61 @@ export default function ConfirmBookingPage() {
 
   // Final submission handler
   const onSubmit = (formValues) => {
-    // formValues.travellers is your array of traveller objects
     const outItin = itineraries[0];
     const outSeg = outItin.FlightSegment[0];
 
+    // Convert travellers to correct format
+    const formattedTravellers = formValues.travellers.map(
+      (traveller, index) => {
+        const passengerType =
+          travellersDef[index]?.role === "Adult"
+            ? "ADT"
+            : travellersDef[index]?.role === "Child"
+            ? "CHD"
+            : "INF";
+
+        return {
+          ...traveller,
+          telephone: {
+            country_code: traveller.telephone?.country_code || "",
+            area_code: traveller.telephone?.area_code || "",
+            number: traveller.telephone?.number || "",
+          },
+          mobile: {
+            country_code: traveller.mobile?.country_code || "",
+            area_code: traveller.mobile?.area_code || "",
+            number: traveller.mobile?.number || "",
+          },
+          passenger_type: passengerType,
+          doc_type: "P",
+        };
+      }
+    );
+
+    // Structure priceInfo with extra required fields
+    const structuredPriceInfo = {
+      ...buildPriceInfo(pricing),
+      ptc_fare_break_downs: buildPriceInfo(pricing).ptc_fare_break_downs.map(
+        (p) => ({
+          ...p,
+          fare_basis_code: "",
+          traveler_ref_number: "",
+          pricing_source: "",
+        })
+      ),
+    };
+
+    // Base payload for one-way
     let payload = {
       ...buildSegmentFields(outSeg, outItin),
       cabin_class: null,
       trip_type: isRoundTrip ? "Return" : "OneWay",
-      travellers: formValues.travellers,
+      travellers: formattedTravellers,
       transaction_identifier: "",
-      priceInfo: buildPriceInfo(pricing),
+      priceInfo: structuredPriceInfo,
     };
 
+    // Include return segment if round-trip
     if (isRoundTrip && itineraries.length > 1) {
       const retItin = itineraries[1];
       const retSeg = retItin.FlightSegment[0];
@@ -208,14 +250,15 @@ export default function ConfirmBookingPage() {
         cabin_class_return: null,
       };
     }
-
     dispatch(confirmBooking({ data: payload, token: userData?.token }))
       .unwrap()
-      .then(() => navigate("/dashboard/flight-bookings"))
+      // .then(() => navigate("/dashboard/flight-bookings"))
       .catch((err) => {
         console.error("Booking failed", err);
         // show toast or error UI here
       });
+    // Submit or log
+    console.log("Final Payload:", payload);
   };
 
   return (
