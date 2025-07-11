@@ -22,7 +22,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile # Make sure this points to the new Dockerfile
+          file: ./DockerFile # Make sure this points to the new DockerFile
           push: true
           tags: connectazeeza/skight-frontend-b2c:latest
           # Optional: Add build arguments for environment variables
