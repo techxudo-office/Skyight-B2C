@@ -1,47 +1,28 @@
-# Stage 1: Build the application
-# -----------------------------
+# Stage 1: Install & build
 FROM node:20-alpine AS builder
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# 1. Copy package manifests & install dependencies
 COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
-# Install dependencies
-# Using --legacy-peer-deps as you did manually
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of the application code
+# 2. Copy all source & build
 COPY . .
+RUN npm run build     # -> .next/
 
-# Set environment variables for the build if you have any
-# ARG NEXT_PUBLIC_API_BASE_URL
-# ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-
-# Build the Next.js application for production
-# This will create the .next folder
-RUN npm run build
-
-# Stage 2: Create the final production image
-# ------------------------------------------
+# Stage 2: Production image
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Create a non-root user for security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+ENV NODE_ENV=production
+# Only install production deps
+COPY package*.json ./
+RUN npm ci --production --legacy-peer-deps
 
-# Copy built assets from the builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Copy build outputs + any public assets
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
 
-# Set the user to the non-root user
-USER nextjs
-
-# Expose the port the app will run on
 EXPOSE 3000
-
-# Set the default command to start the Next.js server
 CMD ["npm", "start"]

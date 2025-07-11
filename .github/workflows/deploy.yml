@@ -1,15 +1,14 @@
-name: Build, Push and Deploy B2C App
+name: Build, Push and Deploy B2C Image
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build_and_push:
-    name: Build and Push Docker Image
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
@@ -18,44 +17,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build & Push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./DockerFile # Make sure this points to the new DockerFile
+          file: Dockerfile
           push: true
-          tags: connectazeeza/skight-frontend-b2c:latest
-          # Optional: Add build arguments for environment variables
-          # build-args: |
-          #   NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          tags: connectazeeza/skyight-b2c:latest
 
   deploy:
-    name: Deploy to EC2
-    needs: build_and_push
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to EC2 instance
+      - name: SSH to EC2 and deploy container
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            # Login to Docker Hub on the EC2 instance
-            echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            # Log in to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" \
+              | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # Pull the latest image
-            docker pull connectazeeza/skight-frontend-b2c:latest
+            # Stop & remove old container (if exists)
+            docker rm -f skyight-b2c || true
 
-            # Stop and remove the old container if it exists
-            docker stop skyight-b2c-container 2>/dev/null || true
-            docker rm skyight-b2c-container 2>/dev/null || true
+            # Pull the new image
+            docker pull connectazeeza/skyight-b2c:latest
 
-            # Run the new container from the new image
-            # -d: run in detached mode (in the background)
-            # -p 3000:3000: map port 3000 of the container to port 3000 on the host (EC2)
-            # --restart always: automatically restart the container if it crashes or the server reboots
-            # --name: give the container a specific name
-            docker run -d -p 3000:3000 --restart always --name skyight-b2c-container connectazeeza/skight-frontend-b2c:latest
+            # Run new container on port 80 -> 3000
+            docker run -d \
+              --name skyight-b2c \
+              -p 80:3000 \
+              --restart unless-stopped \
+              connectazeeza/skyight-b2c:latest
 
-            echo "✅ Deployment successful!"
+            echo "✅ Deployed skyight-b2c container"
