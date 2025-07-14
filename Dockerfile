@@ -1,29 +1,19 @@
-# Stage 1: Install & build
+# Stage 1: Build
 FROM node:20-alpine AS builder
 WORKDIR /app
-
-# 1. Copy package manifests & install dependencies
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
-
-# 2. Copy all source & build
 COPY . .
-RUN npm run build     # -> .next/
+RUN npm run build
 
-# Stage 2: Production image
+# Stage 2: Serve
 FROM node:20-alpine AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
-# Only install production deps
 COPY package*.json ./
 RUN npm ci --production --legacy-peer-deps
-
-# Copy build outputs + any public assets
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.mjs ./next.config.mjs
-
-# Expose the port the app runs on
+COPY --from=builder /app/next.config.mjs .
 EXPOSE 3000
 CMD ["npm", "start"]

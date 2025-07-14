@@ -1,4 +1,4 @@
-name: Build, Push and Deploy B2C Image
+name: Build, Push & Deploy B2C
 
 on:
   push:
@@ -8,17 +8,12 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build & Push Docker image
-        uses: docker/build-push-action@v4
+      - uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
@@ -29,32 +24,22 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2 and deploy container
+      - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.EC2_HOST }} # ← make sure this is here
-          username: ${{ secrets.EC2_USERNAME }} # ← and this
-          key: ${{ secrets.EC2_KEY }} # ← and this
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
           script: |
-            # 1) Prune old Docker resources to free space
+            set -e
             docker system prune -af --volumes || true
-
-            # 2) Login to Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" \
               | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-            # 3) Stop & remove the old container
             docker rm -f skyight-b2c || true
-
-            # 4) Pull the new image
             docker pull connectazeeza/skyight-b2c:latest
-
-            # 5) Run it
             docker run -d \
               --name skyight-b2c \
               -p 127.0.0.1:3000:3000 \
               --restart unless-stopped \
               connectazeeza/skyight-b2c:latest
-
-
-            echo "✅ Deployed skyight-b2c container"
+            echo "✅ Deployed skyight-b2c"
