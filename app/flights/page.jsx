@@ -54,7 +54,7 @@ export default function FlightsPage() {
 
   useEffect(() => {
     if (!from || !to || !departure) {
-      router.replace("/home");
+      router.replace("/");
     }
   }, [from, to, departure, router]);
 

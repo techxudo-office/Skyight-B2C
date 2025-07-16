@@ -30,10 +30,10 @@ export function Header() {
   };
 
   const navigation = [
+    { name: "Home", href: "/" },
     { name: "Flights", href: "/flights" },
-    { name: "Flight Details", href: "/flight-details" },
-    { name: "Destinations", href: "/destinations" },
     { name: "Support", href: "/support" },
+    { name: "Destinations", href: "/destinations" },
   ];
 
   return (

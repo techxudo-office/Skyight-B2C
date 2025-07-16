@@ -6,6 +6,7 @@ import { store, persistor } from "../_core/store/store";
 import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "react-hot-toast";
 import { PersistGate } from "redux-persist/integration/react";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
             >
               <Toaster />
               {children}
+              <NextTopLoader showSpinner={false}/>
             </ThemeProvider>
           </PersistGate>
         </Provider>
