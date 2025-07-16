@@ -1,50 +1,16 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  MapPin,
-  Plane,
-  Users,
-  ArrowRight,
-  Star,
-  Clock,
-  Wifi,
-  Coffee,
-} from "lucide-react";
+import { ArrowRight, Star, Clock, Wifi, Coffee } from "lucide-react";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { trendingDestinations } from "@/data/data";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import SearchForm from "@/components/search-form";
 
 export default function HomePage() {
-  const { userData } = useSelector((state) => state.persist);
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      from: "",
-      to: "",
-      departure: "",
-      passengers: "1",
-    },
-  });
-
-  const onSubmit = (data) => {
-    const params = new URLSearchParams(data);
-    window.location.href = `/flights?${params.toString()}`;
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -62,109 +28,7 @@ export default function HomePage() {
           </div>
 
           {/* Search Form */}
-          <Card className="max-w-4xl mx-auto">
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-                  {/* From */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">
-                      From
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
-                      <Input
-                        placeholder="Departure city"
-                        className="pl-10"
-                        {...register("from", { required: "From is required" })}
-                      />
-                    </div>
-                    {errors.from && (
-                      <p className="text-sm text-red-500">
-                        {errors.from.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* To */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">
-                      To
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
-                      <Input
-                        placeholder="Destination city"
-                        className="pl-10"
-                        {...register("to", { required: "To is required" })}
-                      />
-                    </div>
-                    {errors.to && (
-                      <p className="text-sm text-red-500">
-                        {errors.to.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Departure */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Departure
-                    </label>
-                    <Input
-                      type="date"
-                      className="pl-3"
-                      {...register("departure", {
-                        required: "Departure date is required",
-                      })}
-                    />
-                    {errors.departure && (
-                      <p className="text-sm text-red-500">
-                        {errors.departure.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Passengers */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Passengers
-                    </label>
-                    <div className="relative">
-                      <Users className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
-                      <Input
-                        type="number"
-                        min="1"
-                        max="9"
-                        className="pl-10"
-                        {...register("passengers", {
-                          required: "Passengers is required",
-                          min: { value: 1, message: "Minimum 1 passenger" },
-                          max: { value: 9, message: "Maximum 9 passengers" },
-                        })}
-                      />
-                    </div>
-                    {errors.passengers && (
-                      <p className="text-sm text-red-500">
-                        {errors.passengers.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Submit */}
-                  <div className="flex items-end">
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                    >
-                      <Plane className="w-4 h-4 mr-2" />
-                      Search Flights
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          <SearchForm />
         </div>
       </section>
 

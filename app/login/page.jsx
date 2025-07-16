@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Plane } from "lucide-react";
-import { AuthHeader } from "@/components/authHeader";
+import { Header } from "@/components/header";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/_core/features/persistSlice";
@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AuthHeader />
+      <Header />
 
       <div className="container px-4 py-16 mx-auto">
         <div className="max-w-md mx-auto">

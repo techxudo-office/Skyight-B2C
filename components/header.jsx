@@ -30,7 +30,6 @@ export function Header() {
   };
 
   const navigation = [
-    { name: "Home", href: "/home" },
     { name: "Flights", href: "/flights" },
     { name: "Flight Details", href: "/flight-details" },
     { name: "Destinations", href: "/destinations" },
@@ -47,17 +46,19 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="items-center hidden space-x-6 md:flex">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium transition-colors hover:text-blue-600"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+          {userData?.token && (
+            <nav className="items-center hidden space-x-6 md:flex">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-medium transition-colors hover:text-blue-600"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          )}
 
           <div className="flex items-center space-x-4">
             <Button
@@ -101,16 +102,20 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right">
                 <div className="flex flex-col mt-8 space-y-4">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-lg font-medium"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {userData?.token && (
+                    <>
+                      {navigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className="text-lg font-medium"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                   <div className="pt-4 border-t">
                     {userData?.token ? (
                       <Button

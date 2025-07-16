@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Plane } from "lucide-react";
-import { AuthHeader } from "@/components/authHeader";
+import { Header } from "@/components/Header";
 import Loader from "@/components/loader";
 import { useRouter } from "next/navigation";
 
@@ -67,7 +67,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AuthHeader />
+      <Header />
 
       <div className="container px-4 py-16 mx-auto">
         <div className="max-w-md mx-auto">
