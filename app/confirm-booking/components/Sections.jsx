@@ -105,34 +105,14 @@ export function FieldRenderer({
           )}
         />
       ) : field.type === "phone" ? (
+        // --- THIS BLOCK IS CORRECTED ---
         <Controller
           name={name}
           control={control}
           render={({ field: { onChange, value } }) => (
             <PhoneInput
-              value={
-                value?.country_code
-                  ? `${value.country_code}${value.area_code || ""}${
-                      value.number
-                    }`
-                  : ""
-              }
-              onChange={(parsed) => {
-                // Example: parsed = "+923120824490"
-                if (!parsed) return onChange(null);
-
-                const match = parsed.match(/^\+(\d{1,3})(\d{3})(\d{6,})$/);
-                if (match) {
-                  const [, country_code, area_code, number] = match;
-                  onChange({
-                    country_code,
-                    area_code,
-                    number,
-                  });
-                } else {
-                  onChange(null); // fallback
-                }
-              }}
+              value={value || ""}
+              onChange={onChange}
               className={error ? "border-destructive" : ""}
             />
           )}
