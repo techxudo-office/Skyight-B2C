@@ -71,7 +71,14 @@ export default function FlightsPage() {
       infant: infants,
     };
 
-    dispatch(searchFlight({ payload, token: userData?.token }));
+    dispatch(
+      searchFlight({
+        payload,
+        token: userData?.token,
+        logoutHandler: () => {},
+        secretToken: userData?.customer?.secretToken,
+      })
+    );
   }, [dispatch, params, userData?.token]);
 
   const handleAirlineChange = (airline, checked) => {

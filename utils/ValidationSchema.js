@@ -45,10 +45,4 @@ export const FormSchema = z.object({
     current_employment_status: z
         .string()
         .nonempty("Employment Status is required"),
-    employer_name: z.string().optional(),
-    job_title: z.string().nonempty("Job Title is required"),
-    work_address: z.string().nonempty("Work Address is required"),
-    monthly_income: z
-        .string()
-        .refine((v) => /^\d+(\.\d+)?$/.test(v), "Must be a number"),
 });

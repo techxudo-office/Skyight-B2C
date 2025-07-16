@@ -1,36 +1,34 @@
 // components/PhoneInput.jsx
 "use client";
 
-import * as React from "react";
-import PhoneNumberInput, {
-  getCountryCallingCode,
-  getCountries,
-  Country,
-  Value,
-} from "react-phone-number-input";
-import "react-phone-number-input/style.css";
-
+import { forwardRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { ChevronDown, Check } from "lucide-react";
 import flags from "react-phone-number-input/flags";
+import PhoneNumberInput, {
+  getCountries,
+  getCountryCallingCode,
+} from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 export function PhoneInput({ value, onChange, className }) {
   return (
     <PhoneNumberInput
       className={`flex w-full rounded-md border border-input bg-background text-foreground focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ${className}`}
       value={value}
+      defaultCountry={"IR"}
+      smartCaret={false}
       onChange={onChange}
       flagComponent={Flag}
-      countrySelectComponent={CountrySelector}
       inputComponent={Input}
-      smartCaret={false}
+      countrySelectComponent={CountrySelector}
     />
   );
 }
 
 // 1) Base text input styling
-const Input = React.forwardRef((props, ref) => (
+const Input = forwardRef((props, ref) => (
   <input
     ref={ref}
     {...props}
@@ -52,8 +50,8 @@ const Flag = ({ country, countryName }) => {
 const allCountries = getCountries().sort();
 
 function CountrySelector({ value, onChange, disabled }) {
-  const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const list = allCountries.filter((c) => {
     const name = new Intl.DisplayNames(["en"], { type: "region" }).of(c) || "";

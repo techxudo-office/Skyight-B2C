@@ -42,23 +42,26 @@ const persistSlice = createSlice({
 // Get Routes
 export const getRoutes = createAsyncThunk(
   "booking/getRoutes",
-  ({ token, logoutHandler }) =>
+  ({ token, secretToken, logoutHandler }) =>
     makeRequest("get", "/api/booking-all-active-routes", {
       token,
-      logoutCallback: logoutHandler,
+      secretToken,
       showNoErrors: true,
+      logoutCallback: logoutHandler,
     }).then((response) => response.Routes || [])
 );
 
 // Confirm Booking
 export const confirmBooking = createAsyncThunk(
   "booking/confirmBooking",
-  ({ data, token }) =>
+  ({ data, token, secretToken, logoutHandler }) =>
     makeRequest("post", "/api/booking", {
       data,
       token,
-      successMessage: "Booking created successfully",
+      secretToken,
+      logoutCallback: logoutHandler,
       errorMessage: "Failed to confirm booking",
+      successMessage: "Booking created successfully",
     }).then(() => ({ status: true, message: "Booking Created" }))
 );
 

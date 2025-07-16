@@ -18,10 +18,11 @@ const makeRequest = async (
     token = "",
     data = null,
     headers = {},
+    secretToken = "",
     errorMessage = "",
     successMessage = "",
     showNoErrors = false,
-    logoutCallback = () => {},
+    logoutCallback = () => { },
   }
 ) => {
   try {
@@ -30,7 +31,8 @@ const makeRequest = async (
       url: endpoint,
       ...(data && { data }),
       headers: {
-        ...(token ? { Authorization: token, secrettoken: token } : {}),
+        ...(token ? { Authorization: token } : {}),
+        ...(secretToken ? { secrettoken: secretToken } : {}),
         ...headers,
       },
     };

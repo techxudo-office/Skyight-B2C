@@ -17,7 +17,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoutes } from "@/_core/features/bookingSlice";
 
-
 export default function SearchForm() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -59,10 +58,22 @@ export default function SearchForm() {
 
   useEffect(() => {
     if (userData?.token) {
-      dispatch(getRoutes({ token: userData?.token }))
+      dispatch(
+        getRoutes({
+          token: userData?.token,
+          logoutHandler: () => {},
+          secretToken: userData?.customer?.secretToken,
+        })
+      )
         .unwrap()
         .catch(() => {
-          dispatch(getRoutes({ token: userData?.token }));
+          dispatch(
+            getRoutes({
+              token: userData?.token,
+              logoutHandler: () => {},
+              secretToken: userData?.customer?.secretToken,
+            })
+          );
         });
     }
   }, [dispatch, userData]);

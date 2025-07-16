@@ -56,7 +56,7 @@ export const login = createAsyncThunk("persist/login", async (payload) => {
 // Search Flight
 export const searchFlight = createAsyncThunk(
   "booking/searchFlight",
-  async ({ payload, token }) => {
+  async ({ payload, token, secretToken, logoutHandler }) => {
     const requestBody = {
       trip_type: payload.tripType,
       origin_destinations: [
@@ -80,8 +80,10 @@ export const searchFlight = createAsyncThunk(
     }
 
     return makeRequest("post", "/api/search", {
-      data: requestBody,
       token,
+      secretToken,
+      data: requestBody,
+      logoutCallback: logoutHandler,
       errorMessage: "No Flight Found!",
     }).then((response) => {
       if (

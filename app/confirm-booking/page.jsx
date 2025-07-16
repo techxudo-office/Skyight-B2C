@@ -37,10 +37,6 @@ export default function ConfirmBookingPage() {
       travellers: travellersDef.map(() => defaultTraveller()),
       email_address: "",
       current_employment_status: "",
-      employer_name: "",
-      job_title: "",
-      work_address: "",
-      monthly_income: "",
     },
   });
 
@@ -98,98 +94,98 @@ export default function ConfirmBookingPage() {
   const dispatch = useDispatch();
   const { userData, searchResults } = useSelector((state) => state.persist);
 
-  useEffect(() => {
-    console.log(searchResults, "searchResults");
-  }, [searchResults]);
+  const pricing = searchResults[0]?.AirItineraryPricingInfo; // Extract pricing info for easier access
 
-  // Pull out pricing & itineraries
-  const pricing = searchResults[0]?.AirItineraryPricingInfo;
-  const itineraries = searchResults[0]?.AirItinerary?.OriginDestinationOptions;
-  const isRoundTrip = !params.get("tripType") === "one-way";
+  const onSubmitHandler = async (formValues) => {
+    console.log("object");
+    const isRoundTrip = !params.get("tripType") === "one-way";
+    const itineraries =
+      searchResults[0]?.AirItinerary?.OriginDestinationOptions;
+    const firstItin = itineraries[0];
+    const firstSeg = firstItin.FlightSegment[0];
 
-  // Helper: flatten one segment + its parent into keys
-  const buildSegmentFields = (seg, parent, suffix = "") => ({
-    [`flight_duration${suffix}`]: seg.FlightDuration,
-    [`origin_location_code${suffix}`]: seg.DepartureAirport.LocationCode,
-    [`departure_terminal${suffix}`]: seg.DepartureAirport.Terminal || "", // optional terminal info
-    [`destination_location_code${suffix}`]: seg.ArrivalAirport.LocationCode,
-    [`arrival_terminal${suffix}`]: seg.ArrivalAirport.Terminal || "",
-    [`airline_code${suffix}`]: seg.OperatingAirline.Code,
-    [`air_equip_type${suffix}`]: seg.Equipment.AirEquipType,
-    [`departure_date_time${suffix}`]: seg.DepartureDateTime,
-    [`arrival_date_time${suffix}`]: seg.ArrivalDateTime,
-    [`departure_date${suffix}`]: seg.DepartureDate,
-    [`departure_time${suffix}`]: seg.DepartureTime,
-    [`arrival_date${suffix}`]: seg.ArrivalDate,
-    [`arrival_time${suffix}`]: seg.ArrivalTime,
-    [`flight_number${suffix}`]: seg.FlightNumber,
-    [`res_book_design_Code${suffix}`]: seg.ResBookDesigCode,
-    [`rph${suffix}`]: seg.RPH,
-    [`ref_number${suffix}`]: parent.RefNumber, // itinerary-level reference
-    [`direction_id${suffix}`]: parent.DirectionId, // 0 for outbound, 1 for return typically
-    [`elapsed_time${suffix}`]: parent.ElapsedTime,
-    [`free_baggages${suffix}`]: seg.FreeBaggages,
-    // Map booking class availabilities into simpler array objects
-    [`booking_class_avails${suffix}`]: seg.BookingClassAvails.map((item) => ({
-      available_PTC: item.AvailablePTC,
-      res_book_desig_code: item.ResBookDesigCode,
-      res_book_desig_quantity: item.ResBookDesigQuantity,
-      rph: item.RPH,
-      res_book_desig_cabin_code: item.ResBookDesigCabinCode,
-      fare_basis: item.FareBasis,
-    })),
-  });
+    // Helper: map one FlightSegment + its parent itinerary option into flat payload fields
+    // suffix allows to distinguish outbound vs return trip data keys (e.g., flight_duration_return)
+    const buildSegmentFields = (seg, parent, suffix = "") => ({
+      [`flight_duration${suffix}`]: seg.FlightDuration,
+      [`origin_location_code${suffix}`]: seg.DepartureAirport.LocationCode,
+      [`departure_terminal${suffix}`]: seg.DepartureAirport.Terminal || "", // optional terminal info
+      [`destination_location_code${suffix}`]: seg.ArrivalAirport.LocationCode,
+      [`arrival_terminal${suffix}`]: seg.ArrivalAirport.Terminal || "",
+      [`airline_code${suffix}`]: seg.OperatingAirline.Code,
+      [`air_equip_type${suffix}`]: seg.Equipment.AirEquipType,
+      [`departure_date_time${suffix}`]: seg.DepartureDateTime,
+      [`arrival_date_time${suffix}`]: seg.ArrivalDateTime,
+      [`departure_date${suffix}`]: seg.DepartureDate,
+      [`departure_time${suffix}`]: seg.DepartureTime,
+      [`arrival_date${suffix}`]: seg.ArrivalDate,
+      [`arrival_time${suffix}`]: seg.ArrivalTime,
+      [`flight_number${suffix}`]: seg.FlightNumber,
+      [`res_book_design_Code${suffix}`]: seg.ResBookDesigCode,
+      [`rph${suffix}`]: seg.RPH,
+      [`ref_number${suffix}`]: parent.RefNumber, // itinerary-level reference
+      [`direction_id${suffix}`]: parent.DirectionId, // 0 for outbound, 1 for return typically
+      [`elapsed_time${suffix}`]: parent.ElapsedTime,
+      [`free_baggages${suffix}`]: seg.FreeBaggages,
+      // Map booking class availabilities into simpler array objects
+      [`booking_class_avails${suffix}`]: seg.BookingClassAvails.map((item) => ({
+        available_PTC: item.AvailablePTC,
+        res_book_desig_code: item.ResBookDesigCode,
+        res_book_desig_quantity: item.ResBookDesigQuantity,
+        rph: item.RPH,
+        res_book_desig_cabin_code: item.ResBookDesigCabinCode,
+        fare_basis: item.FareBasis,
+      })),
+    });
 
-  // Helper: structure the pricing info
-  const buildPriceInfo = (pricing) => ({
-    itin_total_fare: {
-      base_fare: {
-        amount: pricing.ItinTotalFare.BaseFare.Amount,
-        currency_code: pricing.ItinTotalFare.BaseFare.CurrencyCode,
-        decimal_places: pricing.ItinTotalFare.BaseFare.DecimalPlaces,
-      },
-      total_equiv_fare: {
-        amount: pricing.ItinTotalFare.MarkupFare.Amount,
-        currency_code: pricing.ItinTotalFare.MarkupFare.CurrencyCode,
-        decimal_places: pricing.ItinTotalFare.MarkupFare.DecimalPlaces,
-      },
-      total_fare: {
-        amount: pricing.ItinTotalFare.TotalFare.Amount,
-        currency_code: pricing.ItinTotalFare.TotalFare.CurrencyCode,
-        decimal_places: pricing.ItinTotalFare.TotalFare.DecimalPlaces,
-      },
-    },
-    ptc_fare_break_downs: pricing.PTC_FareBreakdowns.map((pax) => ({
-      passenger_type_quantity: {
-        code: pax.PassengerTypeQuantity.Code,
-        quantity: pax.PassengerTypeQuantity.Quantity,
-      },
-      passenger_fare: {
+    // Helper: build the pricing info section of the payload with fares and passenger breakdown
+    const buildPriceInfo = (pricing) => ({
+      itin_total_fare: {
         base_fare: {
-          amount: pax.PassengerFare.BaseFare.Amount,
-          currency_code: pax.PassengerFare.BaseFare.CurrencyCode,
-          decimal_places: pax.PassengerFare.BaseFare.DecimalPlaces,
+          amount: pricing.ItinTotalFare.BaseFare.Amount,
+          currency_code: pricing.ItinTotalFare.BaseFare.CurrencyCode,
+          decimal_places: pricing.ItinTotalFare.BaseFare.DecimalPlaces,
+        },
+        total_equiv_fare: {
+          amount: pricing.ItinTotalFare.MarkupFare.Amount,
+          currency_code: pricing.ItinTotalFare.MarkupFare.CurrencyCode,
+          decimal_places: pricing.ItinTotalFare.MarkupFare.DecimalPlaces,
         },
         total_fare: {
-          amount: pax.PassengerFare.TotalFare.Amount,
-          currency_code: pax.PassengerFare.TotalFare.CurrencyCode,
-          decimal_places: pax.PassengerFare.TotalFare.DecimalPlaces,
+          amount: pricing.ItinTotalFare.TotalFare.Amount,
+          currency_code: pricing.ItinTotalFare.TotalFare.CurrencyCode,
+          decimal_places: pricing.ItinTotalFare.TotalFare.DecimalPlaces,
         },
-        fees: pax.PassengerFare.Fees,
-        taxes: pax.PassengerFare.Taxes.Tax.map((tax) => ({
-          name: tax.Name,
-          amount: tax.Amount,
-        })),
       },
-    })),
-  });
+      ptc_fare_break_downs: pricing.PTC_FareBreakdowns.map((passenger) => ({
+        passenger_type_quantity: {
+          code: passenger.PassengerTypeQuantity.Code,
+          quantity: passenger.PassengerTypeQuantity.Quantity,
+        },
+        fare_basis_code: "", // empty here, could be filled if available
+        passenger_fare: {
+          base_fare: {
+            amount: passenger.PassengerFare.BaseFare.Amount,
+            currency_code: passenger.PassengerFare.BaseFare.CurrencyCode,
+            decimal_places: passenger.PassengerFare.BaseFare.DecimalPlaces,
+          },
+          total_fare: {
+            amount: passenger.PassengerFare.TotalFare.Amount,
+            currency_code: passenger.PassengerFare.TotalFare.CurrencyCode,
+            decimal_places: passenger.PassengerFare.TotalFare.DecimalPlaces,
+          },
+          fees: passenger.PassengerFare.Fees,
+          // Flatten tax array into name/amount pairs
+          taxes: passenger.PassengerFare.Taxes.Tax.map((tax) => ({
+            name: tax.Name,
+            amount: tax.Amount,
+          })),
+        },
+        traveler_ref_number: "", // left blank for now
+        pricing_source: "", // left blank for now
+      })),
+    });
 
-  // Final submission handler
-  const onSubmit = (formValues) => {
-    const outItin = itineraries[0];
-    const outSeg = outItin.FlightSegment[0];
-
-    // Convert travellers to correct format
     const formattedTravellers = formValues.travellers.map(
       (traveller, index) => {
         const passengerType =
@@ -217,48 +213,41 @@ export default function ConfirmBookingPage() {
       }
     );
 
-    // Structure priceInfo with extra required fields
-    const structuredPriceInfo = {
-      ...buildPriceInfo(pricing),
-      ptc_fare_break_downs: buildPriceInfo(pricing).ptc_fare_break_downs.map(
-        (p) => ({
-          ...p,
-          fare_basis_code: "",
-          traveler_ref_number: "",
-          pricing_source: "",
-        })
-      ),
-    };
-
-    // Base payload for one-way
+    // Build main booking payload starting with outbound flight segment data
     let payload = {
-      ...buildSegmentFields(outSeg, outItin),
-      cabin_class: null,
+      ...buildSegmentFields(firstSeg, firstItin),
+      cabin_class: null, // placeholder, could be enhanced to pick from UI
       trip_type: isRoundTrip ? "Return" : "OneWay",
-      travellers: formattedTravellers,
-      transaction_identifier: "",
-      priceInfo: structuredPriceInfo,
+      travellers: formattedTravellers, // all passenger details included
+      transaction_identifier: "", // blank here, can be assigned if needed
+      priceInfo: buildPriceInfo(pricing), // structured pricing info
     };
 
-    // Include return segment if round-trip
+    // If trip is round-trip, also add return segment data with '_return' suffix keys
     if (isRoundTrip && itineraries.length > 1) {
       const retItin = itineraries[1];
       const retSeg = retItin.FlightSegment[0];
       payload = {
         ...payload,
         ...buildSegmentFields(retSeg, retItin, "_return"),
-        cabin_class_return: null,
+        cabin_class_return: null, // placeholder for return cabin class
       };
     }
-    dispatch(confirmBooking({ data: payload, token: userData?.token }))
+
+    // Dispatch the confirmBooking Redux action with payload and user token
+    dispatch(
+      confirmBooking({
+        data: payload,
+        token: userData?.token,
+        logoutHandler: () => {},
+        secretToken: userData?.customer?.secretToken,
+      })
+    )
       .unwrap()
-      // .then(() => navigate("/dashboard/flight-bookings"))
-      .catch((err) => {
-        console.error("Booking failed", err);
-        // show toast or error UI here
+      .then(() => navigate("/dashboard/flight-bookings")) // on success, navigate away
+      .catch(() => {
+        // error handling could be enhanced here
       });
-    // Submit or log
-    console.log("Final Payload:", payload);
   };
 
   return (
@@ -277,7 +266,7 @@ export default function ConfirmBookingPage() {
         }))}
       />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
+      <form onSubmit={handleSubmit(onSubmitHandler)} className="mt-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -335,7 +324,7 @@ export default function ConfirmBookingPage() {
                     type="submit"
                     className="flex items-center px-6 py-2 ml-auto text-white bg-green-600 rounded-lg hover:bg-green-700"
                   >
-                    Submit <CircleIcon className="ml-2" />
+                    Submit
                   </button>
                 )}
               </div>
