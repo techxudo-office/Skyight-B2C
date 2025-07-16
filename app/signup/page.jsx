@@ -59,7 +59,7 @@ export default function SignupPage() {
 
     try {
       await dispatch(signup(payload)).unwrap();
-      router.push("/auth/login");
+      router.push("/login");
     } finally {
       setIsLoading(false);
     }
@@ -267,7 +267,7 @@ export default function SignupPage() {
               <div className="text-sm text-center">
                 Already have an account?{" "}
                 <Link
-                  href="/auth/login"
+                  href="/login"
                   className="text-blue-600 hover:underline"
                 >
                   Sign in

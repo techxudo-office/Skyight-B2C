@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import makeRequest from "../../utils/ApiHelper";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -26,6 +27,7 @@ const persistSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userData = action.payload;
+        Cookies.set('token', action.payload.token, { expires: 7, sameSite: 'lax', path: '/' });
       })
       .addCase(login.rejected, (state) => {
         state.isLoading = false;

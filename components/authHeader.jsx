@@ -61,10 +61,10 @@ export function AuthHeader() {
             </Button>
 
             <div className="hidden md:flex items-center space-x-2">
-              <Link href="/auth/login">
+              <Link href="/login">
                 <Button variant="ghost">Login</Button>
               </Link>
-              <Link href="/auth/signup">
+              <Link href="/signup">
                 <Button>Sign Up</Button>
               </Link>
             </div>
@@ -89,12 +89,12 @@ export function AuthHeader() {
                     </Link>
                   ))}
                   <div className="pt-4 border-t">
-                    <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
                       <Button variant="ghost" className="w-full justify-start">
                         Login
                       </Button>
                     </Link>
-                    <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
+                    <Link href="/signup" onClick={() => setIsOpen(false)}>
                       <Button className="w-full justify-start mt-2">
                         Sign Up
                       </Button>

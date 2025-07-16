@@ -54,7 +54,7 @@ export default function HomePage() {
         <div className="container px-4 mx-auto">
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold md:text-6xl">
-              Find Your Perfect Flight From Skyight
+              Find Your Perfect Flight
             </h1>
             <p className="text-xl md:text-2xl opacity-90">
               Book flights to anywhere in the world with the best prices

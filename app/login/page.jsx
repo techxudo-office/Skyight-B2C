@@ -18,7 +18,7 @@ import { Eye, EyeOff, Plane } from "lucide-react";
 import { AuthHeader } from "@/components/authHeader";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../../_core/features/persistSlice";
+import { login } from "@/_core/features/persistSlice";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -141,7 +141,7 @@ export default function LoginPage() {
               <div className="text-sm text-center">
                 Don&apos;t have an account?{" "}
                 <Link
-                  href="/auth/signup"
+                  href="/signup"
                   className="text-blue-600 hover:underline"
                 >
                   Sign up
