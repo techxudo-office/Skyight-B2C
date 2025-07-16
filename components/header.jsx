@@ -1,19 +1,33 @@
-"use client"
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Plane, Sun, Moon } from "lucide-react"
-import { useTheme } from "next-themes"
+"use client";
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Menu, Plane, Sun, Moon } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { theme, setTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { userData } = useSelector((state) => state.persist);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
+
+  const handleLogout = () => {
+    dispatch({ type: "user/logout" });
+    Cookies.remove("token"); // remove token cookie
+    router.replace("/login");
+    toast.success("Logged out successfully");
+  };
 
   const navigation = [
     { name: "Home", href: "/home" },
@@ -21,7 +35,7 @@ export function Header() {
     { name: "Flight Details", href: "/flight-details" },
     { name: "Destinations", href: "/destinations" },
     { name: "Support", href: "/support" },
-  ]
+  ];
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -62,12 +76,20 @@ export function Header() {
             </Button>
 
             <div className="items-center hidden space-x-2 md:flex">
-              <Link href="/login">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
+              {userData?.token ? (
+                <Button onClick={handleLogout} variant="outline">
+                  Logout
+                </Button>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="ghost">Login</Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button>Sign Up</Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu */}
@@ -90,16 +112,34 @@ export function Header() {
                     </Link>
                   ))}
                   <div className="pt-4 border-t">
-                    <Link href="/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="justify-start w-full">
-                        Login
+                    {userData?.token ? (
+                      <Button
+                        variant="ghost"
+                        className="justify-start w-full"
+                        onClick={() => {
+                          handleLogout();
+                          setIsOpen(false);
+                        }}
+                      >
+                        Logout
                       </Button>
-                    </Link>
-                    <Link href="/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="justify-start w-full mt-2">
-                        Sign Up
-                      </Button>
-                    </Link>
+                    ) : (
+                      <>
+                        <Link href="/login" onClick={() => setIsOpen(false)}>
+                          <Button
+                            variant="ghost"
+                            className="justify-start w-full"
+                          >
+                            Login
+                          </Button>
+                        </Link>
+                        <Link href="/signup" onClick={() => setIsOpen(false)}>
+                          <Button className="justify-start w-full mt-2">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>
