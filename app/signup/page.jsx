@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Plane } from "lucide-react";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/header";
 import Loader from "@/components/loader";
 import { useRouter } from "next/navigation";
 
