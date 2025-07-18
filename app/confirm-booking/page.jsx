@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Circle as CircleIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProgressBar from "./components/ProgressBar";
 import { progressSteps, form_constants } from "./components/FormConstants";
 import { FormSchema } from "@/utils/ValidationSchema";
@@ -13,7 +13,7 @@ import {
   StepFields,
   TravellerSection,
   useTravellerDefs,
-  usePopulateCities,
+  parsePhone,
 } from "./components/Sections";
 import { useDispatch, useSelector } from "react-redux";
 import { confirmBooking } from "@/_core/features/bookingSlice";
@@ -97,7 +97,6 @@ export default function ConfirmBookingPage() {
   const pricing = searchResults[0]?.AirItineraryPricingInfo; // Extract pricing info for easier access
 
   const onSubmitHandler = async (formValues) => {
-    console.log("object");
     const isRoundTrip = !params.get("tripType") === "one-way";
     const itineraries =
       searchResults[0]?.AirItinerary?.OriginDestinationOptions;
@@ -186,32 +185,22 @@ export default function ConfirmBookingPage() {
       })),
     });
 
-    const formattedTravellers = formValues.travellers.map(
-      (traveller, index) => {
-        const passengerType =
-          travellersDef[index]?.role === "Adult"
-            ? "ADT"
-            : travellersDef[index]?.role === "Child"
-            ? "CHD"
-            : "INF";
+    const formattedTravellers = travellerValues.map((traveller, index) => {
+      const passengerType =
+        travellersDef[index]?.role === "Adult"
+          ? "ADT"
+          : travellersDef[index]?.role === "Child"
+          ? "CHD"
+          : "INF";
 
-        return {
-          ...traveller,
-          telephone: {
-            country_code: traveller.telephone?.country_code || "",
-            area_code: traveller.telephone?.area_code || "",
-            number: traveller.telephone?.number || "",
-          },
-          mobile: {
-            country_code: traveller.mobile?.country_code || "",
-            area_code: traveller.mobile?.area_code || "",
-            number: traveller.mobile?.number || "",
-          },
-          passenger_type: passengerType,
-          doc_type: "P",
-        };
-      }
-    );
+      return {
+        ...traveller,
+        telephone: parsePhone(traveller.telephone, "PK"),
+        mobile: parsePhone(traveller.mobile, "PK"),
+        passenger_type: passengerType,
+        doc_type: "P",
+      };
+    });
 
     // Build main booking payload starting with outbound flight segment data
     let payload = {

@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { form_constants } from "./FormConstants";
 import PhoneInput from "@/components/ui/PhoneInput";
+import { PhoneNumberUtil } from "google-libphonenumber";
 
 export function TravellerSection({
   travellers,
@@ -185,4 +186,27 @@ export function defaultTraveller() {
     doc_type: "P",
     passport_expiry_date: dayjs().format("YYYY-MM-DD"),
   };
+}
+
+// utils/parsePhoneNumber.js
+const phoneUtil = PhoneNumberUtil.getInstance();
+
+export function parsePhone(phone, defaultCountry = "IR") {
+  try {
+    console.log(phone,"Phone number");
+    const parsed = phoneUtil.parseAndKeepRawInput(phone, defaultCountry);
+
+    return {
+      country_code: String(parsed.getCountryCode()),
+      area_code: String(parsed.getNationalNumber()).slice(0, 3), // rough area code logic
+      number: String(parsed.getNationalNumber()).slice(3),
+    };
+  } catch (err) {
+    console.error("Invalid phone number:", phone);
+    return {
+      country_code: "",
+      area_code: "",
+      number: "",
+    };
+  }
 }

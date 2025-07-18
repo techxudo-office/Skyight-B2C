@@ -9,17 +9,19 @@ export const TravellerSchema = z.object({
     last_name: z.string().nonempty("Last Name is required"),
     email: z.string().email("Invalid email address"),
 
-    telephone: z.object({
-        country_code: z.string().nonempty("Country code is required"),
-        area_code: z.string().optional(), // optional if needed
-        number: z.string().nonempty("Phone number is required"),
-    }),
+    // telephone: z.object({
+    //     country_code: z.string().nonempty("Country code is required"),
+    //     area_code: z.string().optional(), // optional if needed
+    //     number: z.string().nonempty("Phone number is required"),
+    // }),
 
-    mobile: z.object({
-        country_code: z.string().nonempty("Country code is required"),
-        area_code: z.string().optional(), // optional if needed
-        number: z.string().nonempty("Mobile number is required"),
-    }),
+    // mobile: z.object({
+    //     country_code: z.string().nonempty("Country code is required"),
+    //     area_code: z.string().optional(), // optional if needed
+    //     number: z.string().nonempty("Mobile number is required"),
+    // }),
+    telephone: z.string().nonempty("Telephone is required"),
+    mobile: z.string().nonempty("Mobile is required"),
 
     country: z.string().nonempty("Country is required"),
     city: z.string().nonempty("City is required"),
