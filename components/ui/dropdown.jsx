@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"; // optional if you use next-themes
 
 export default function Dropdown({
   value,
+  loading,
   disabled,
   onChange,
   options = [],
@@ -22,6 +23,7 @@ export default function Dropdown({
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
+      cursor: disabled ? "not-allowed" : "pointer",
       backgroundColor: isDark ? "#1f2937" : "white", // gray-800 or white
       borderColor: state.isFocused
         ? isDark
@@ -95,6 +97,7 @@ export default function Dropdown({
   return (
     <ReactSelect
       value={value}
+      isLoading={loading}
       onChange={onChange}
       isDisabled={disabled}
       placeholder={placeholder}

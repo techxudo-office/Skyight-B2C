@@ -163,6 +163,7 @@ export default function SearchForm() {
               {mounted && (
                 <Dropdown
                   value={from}
+                  loading={loadingRoutes}
                   options={routes.map((r) => ({
                     value: r.Origin,
                     label: r.Origin,
@@ -171,7 +172,7 @@ export default function SearchForm() {
                     resetField("to");
                     setValue("from", val, { shouldValidate: true });
                   }}
-                  placeholder="Departure city"
+                  placeholder="Departure"
                 />
               )}
               {errors.from && (
@@ -197,7 +198,7 @@ export default function SearchForm() {
                   onChange={(val) =>
                     setValue("to", val, { shouldValidate: true })
                   }
-                  placeholder="Destination city"
+                  placeholder="Destination"
                 />
               )}
               {errors.to && (
