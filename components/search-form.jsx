@@ -16,6 +16,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoutes } from "@/_core/features/bookingSlice";
+import airports from "@nwpr/airport-codes";
 
 export default function SearchForm() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function SearchForm() {
   const [tripType, setTripType] = useState("one-way");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { userData } = useSelector((state) => state.persist);
+  const [processedRoutes, setProcessedRoutes] = useState([]);
   const { routes, loadingRoutes } = useSelector((state) => state.booking);
 
   useEffect(() => {
@@ -77,6 +79,59 @@ export default function SearchForm() {
         });
     }
   }, [dispatch, userData]);
+
+  useEffect(() => {
+    if (routes && routes.length > 0) {
+      const enrichedRoutes = routes
+        .map((route) => {
+          // Find airport data for Origin and Destination
+          const origin = airports.find((a) => a.iata === route.Origin);
+          const dest = airports.find((a) => a.iata === route.Destination);
+
+          // Create the new, enriched object structure
+          return {
+            Origin: {
+              terminal: route.Origin,
+              // Use the found name, or fallback to the terminal code if not found
+              name: origin?.city || route.Origin,
+            },
+            Destination: {
+              terminal: route.Destination,
+              name: dest?.city || route.Destination,
+            },
+          };
+        })
+        .filter(Boolean); // Filter out any potential null/undefined entries
+
+      setProcessedRoutes(enrichedRoutes);
+    }
+  }, [routes]);
+
+  const departureOptions = React.useMemo(() => {
+    // Create a unique list of origins to avoid duplicates in the dropdown
+    const uniqueOrigins = [
+      ...new Map(
+        processedRoutes.map((item) => [item.Origin.terminal, item.Origin])
+      ).values(),
+    ];
+    return uniqueOrigins.map((origin) => ({
+      value: origin.terminal,
+      label: `${origin.name} (${origin.terminal})`, // e.g., "Tehran (THR)"
+    }));
+  }, [processedRoutes]);
+
+  const arrivalOptions = React.useMemo(
+    () => (from) => {
+      if (!from?.value) return [];
+      return processedRoutes
+        .filter(({ Origin }) => Origin.terminal === from.value)
+        .map(({ Destination }) => ({
+          value: Destination.terminal,
+          label: `${Destination.name} (${Destination.terminal})`,
+        }));
+    },
+    [processedRoutes]
+  );
 
   const onSubmit = (data) => {
     if (tripType === "one-way") delete data.returnDate;
@@ -164,10 +219,7 @@ export default function SearchForm() {
                 <Dropdown
                   value={from}
                   loading={loadingRoutes}
-                  options={routes.map((r) => ({
-                    value: r.Origin,
-                    label: r.Origin,
-                  }))}
+                  options={departureOptions}
                   onChange={(val) => {
                     resetField("to");
                     setValue("from", val, { shouldValidate: true });
@@ -189,12 +241,7 @@ export default function SearchForm() {
                 <Dropdown
                   value={to}
                   disabled={!from}
-                  options={routes
-                    ?.filter(({ Origin }) => Origin === from?.value)
-                    .map(({ Destination }) => ({
-                      value: Destination,
-                      label: Destination,
-                    }))}
+                  options={arrivalOptions(from)}
                   onChange={(val) =>
                     setValue("to", val, { shouldValidate: true })
                   }
