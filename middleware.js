@@ -1,41 +1,54 @@
 // middleware.ts
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
 export function middleware(req) {
-    const { pathname } = req.nextUrl
-    const token = req.cookies.get('token')?.value
+    const { pathname, searchParams } = req.nextUrl;
 
-    // Whitelist public paths
+    // If the user is on the flight search page
+    if (pathname === '/flights') {
+        const from = searchParams.get('from');
+        const to = searchParams.get('to');
+        const departure = searchParams.get('departure');
+
+        // If any of the required parameters are missing, redirect to the homepage
+        if (!from || !to || !departure) {
+            const homeUrl = req.nextUrl.clone();
+            homeUrl.pathname = '/';
+            homeUrl.search = ''; // Clear any existing query params
+            return NextResponse.redirect(homeUrl);
+        }
+    }
+
+    // Your existing authentication logic can be combined here
+    const token = req.cookies.get('token')?.value;
+
     if (
         pathname === '/login' ||
         pathname === '/signup' ||
         pathname.startsWith('/_next') ||
-        pathname.includes('.')   // static files, etc.
+        pathname.includes('.')
     ) {
-        return NextResponse.next()
+        return NextResponse.next();
     }
 
-    // If no token, redirect to /login
     if (!token) {
-        const loginUrl = req.nextUrl.clone()
-        loginUrl.pathname = '/login'
-        return NextResponse.redirect(loginUrl)
+        const loginUrl = req.nextUrl.clone();
+        loginUrl.pathname = '/login';
+        return NextResponse.redirect(loginUrl);
     }
 
-    // Otherwise let them through
-    return NextResponse.next()
+    return NextResponse.next();
 }
 
 export const config = {
-    // apply to all routes except static, api, _next, etc.
     matcher: [
         /*
-         * match everything except:
-         *  - _next/static (static files)
-         *  - _next/image
-         *  - favicon.ico
-         *  - /api (if you want to protect API routes too, remove that line)
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
          */
-        '/((?!_next/static|_next/image|favicon.ico|api).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
     ],
-}
+};

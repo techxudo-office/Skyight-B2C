@@ -54,13 +54,6 @@ export default function FlightsPage() {
   const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
 
   useEffect(() => {
-    if (!from || !to || !departure) {
-      router.replace("/");
-    }
-  }, [from, to, departure, router]);
-
-  useEffect(() => {
-    if (!from || !to || !departure) return;
     const payload = {
       tripType: tripType === "one-way" ? "OneWay" : "Return",
       originCode: from,
