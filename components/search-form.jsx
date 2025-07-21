@@ -1,22 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plane, Users } from "lucide-react";
-import { Counter } from "@/components/ui/counter";
-import { useRouter } from "next/navigation";
-import Dropdown from "@/components/ui/dropdown";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useDispatch, useSelector } from "react-redux";
-import { getRoutes } from "@/_core/features/bookingSlice";
+import { useForm } from "react-hook-form";
 import airports from "@nwpr/airport-codes";
+import { Plane, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Dropdown from "@/components/ui/dropdown";
+import { useRouter } from "nextjs-toploader/app";
+import { Counter } from "@/components/ui/counter";
+import { useDispatch, useSelector } from "react-redux";
+import { Card, CardContent } from "@/components/ui/card";
+import { getRoutes } from "@/_core/features/bookingSlice";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function SearchForm() {
   const router = useRouter();

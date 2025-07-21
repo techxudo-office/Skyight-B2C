@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "nextjs-toploader/app";
 import { Menu, Plane, Sun, Moon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 
 export function Header() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export function Header() {
   const handleLogout = () => {
     dispatch({ type: "user/logout" });
     Cookies.remove("token"); // remove token cookie
-    router.replace("/login");
+    router.push("/login");
     toast.success("Logged out successfully");
   };
 

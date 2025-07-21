@@ -13,13 +13,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Plane } from "lucide-react";
-import { Header } from "@/components/header";
 import Loader from "@/components/loader";
-import { useRouter } from "next/navigation";
+import { Header } from "@/components/header";
+import { Label } from "@/components/ui/label";
+import { useRouter } from 'nextjs-toploader/app';
+import { Eye, EyeOff, Plane } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 
 export default function SignupPage() {
   const router = useRouter();
