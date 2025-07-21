@@ -23,7 +23,10 @@ import { useDispatch, useSelector } from "react-redux";
 import FilterSidebar from "./components/FilterSidebar";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
-import { searchFlight } from "@/_core/features/persistSlice";
+import {
+  clearSearchResults,
+  searchFlight,
+} from "@/_core/features/persistSlice";
 import { Plane, Filter, Star, Wifi, Utensils } from "lucide-react";
 import FlightSearchSummary from "./components/FlightSearchSummary";
 import Loader from "@/components/loader";
@@ -73,6 +76,10 @@ export default function FlightsPage() {
         secretToken: userData?.customer?.secretToken,
       })
     );
+
+    return () => {
+      dispatch(clearSearchResults());
+    };
   }, [dispatch, params, userData?.token]);
 
   const handleAirlineChange = (airline, checked) => {
