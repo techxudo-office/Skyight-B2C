@@ -5,6 +5,9 @@ const initialState = {
   routes: [],
   loadingRoutes: false,
 
+  bookings: [],
+  isLoadingBookings: false,
+
   isBookingLoading: false,
   bookingMessage: null,
 };
@@ -24,6 +27,16 @@ const persistSlice = createSlice({
       })
       .addCase(getRoutes.rejected, (state, action) => {
         state.loadingRoutes = false;
+      })
+      .addCase(getBookings.pending, (state) => {
+        state.isLoadingBookings = true;
+      })
+      .addCase(getBookings.fulfilled, (state, action) => {
+        state.isLoadingBookings = false;
+        state.bookings = action.payload;
+      })
+      .addCase(getBookings.rejected, (state, action) => {
+        state.isLoadingBookings = false;
       })
       .addCase(confirmBooking.pending, (state) => {
         state.isBookingLoading = true;
@@ -49,6 +62,18 @@ export const getRoutes = createAsyncThunk(
       showNoErrors: true,
       logoutCallback: logoutHandler,
     }).then((response) => response.Routes || [])
+);
+
+// Get Bookings
+export const getBookings = createAsyncThunk(
+  "booking/getBookings",
+  ({ token, secretToken, logoutHandler }) =>
+    makeRequest("get", "/api/fetch-all-bookings", {
+      token,
+      secretToken,
+      showNoErrors: true,
+      logoutCallback: logoutHandler,
+    })
 );
 
 // Confirm Booking
