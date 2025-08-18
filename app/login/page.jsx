@@ -14,7 +14,7 @@ import { Header } from "@/components/header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,10 +37,10 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     dispatch(login(data))
       .unwrap()
-      .then(() => router.push("/"));
+      .then(() => router.replace("/"));
   };
 
   return (
@@ -140,10 +140,7 @@ export default function LoginPage() {
 
               <div className="text-sm text-center">
                 Don&apos;t have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="text-blue-600 hover:underline"
-                >
+                <Link href="/signup" className="text-blue-600 hover:underline">
                   Sign up
                 </Link>
               </div>
