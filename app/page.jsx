@@ -3,40 +3,63 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Star, Clock, Wifi, Coffee } from "lucide-react";
+import { ArrowRight, Star, Clock, Wifi, Coffee, Phone, Menu } from "lucide-react";
 import Link from "next/link";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { trendingDestinations } from "@/data/data";
-import SearchForm from "@/components/search-form";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Top Banner */}
+      <div className="bg-blue-600 text-white text-center text-sm py-5">
+        Summer specials offer • The season&apos;s best deals | Up to 60% off
+      </div>
+
+      {/* Header */}
+      <header className="absolute top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-20">
+        {/* Logo */}
+        <h1 className="text-2xl font-bold text-white">
+          Skyight<span className="text-white">.</span>
+        </h1>
+
+        {/* Right side */}
+        <div className="flex items-center gap-6 text-white">
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            <span>(028) 858-494-999</span>
+          </div>
+          {/* <Menu className="w-6 h-6 cursor-pointer" /> */}
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 text-white bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-800 dark:to-purple-900">
-        <div className="container px-4 mx-auto">
-          <div className="mb-12 text-center">
-            <h1 className="mb-4 text-4xl font-bold md:text-6xl">
-              Find Your Perfect Flight
-            </h1>
-            <p className="text-xl md:text-2xl opacity-90">
-              Book flights to anywhere in the world with the best prices
-            </p>
-          </div>
-
-          {/* Search Form */}
-          <SearchForm />
+      <section
+        className="relative flex items-center justify-center min-h-[90vh] text-center text-white"
+        style={{
+          backgroundImage: "url('/mumbai.jpg')", // replace with your image path
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="relative z-10 px-4 max-w-3xl">
+          <p className="mb-4 text-lg">No stress, just real experiences.</p>
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            Top places to visit, eat or experience –{" "}
+            <span className="text-blue-600">all in one spot.</span>
+          </h2>
+          <Button size="lg" className="rounded-full px-8 py-6 text-lg">
+            Let's Explore
+          </Button>
         </div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
       </section>
 
-      {/* ... Other sections unchanged ... */}
+      {/* Why Choose Section (kept same) */}
       <section className="py-16 bg-muted/50">
         <div className="container px-4 mx-auto">
           <h2 className="mb-12 text-3xl font-bold text-center">
-            Why Choose Skyight?
+            Why Choose Travito?
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <Card className="text-center">
@@ -53,8 +76,7 @@ export default function HomePage() {
                 <Wifi className="w-12 h-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="mb-2 text-xl font-semibold">Best Prices</h3>
                 <p className="text-muted-foreground">
-                  Compare prices from hundreds of airlines to find the best
-                  deals
+                  Compare prices from hundreds of sources to find the best deals
                 </p>
               </CardContent>
             </Card>
@@ -71,6 +93,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Trending Destinations (same) */}
       <section className="py-16">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-between mb-12">
@@ -115,8 +138,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }
