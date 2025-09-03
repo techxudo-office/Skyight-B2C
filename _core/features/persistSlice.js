@@ -10,50 +10,32 @@ const initialState = {
   isLoadingSearchResults: false,
 };
 
-
-const persistSlice = createSlice({
-  name: "persist",
-  initialState,
-  reducers: {
-    clearSearchResults: (state) => {
-      state.searchResults = [];
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.userData = action.payload;
-        Cookies.set('token', action.payload.token, { expires: 7, sameSite: 'lax', path: '/' });
-      })
-      .addCase(login.rejected, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(searchFlight.pending, (state) => {
-        state.isLoadingSearchResults = true;
-      })
-      .addCase(searchFlight.fulfilled, (state, action) => {
-        state.isLoadingSearchResults = false;
-        state.searchResults = action.payload;
-      })
-      .addCase(searchFlight.rejected, (state, action) => {
-        state.isLoadingSearchResults = false;
-      })
-  },
-});
-
+// Login
 export const login = createAsyncThunk("persist/login", async (payload) => {
   const response = await makeRequest("post", "/api/login", {
     data: payload,
     successMessage: "Login Successfully",
     errorMessage: "Login failed. Please try again.",
   });
+
+  // Attempt to normalize token from varied backend shapes
+  const possibleToken =
+    response?.token ||
+    response?.access_token ||
+    response?.data?.token ||
+    response?.data?.access_token ||
+    null;
+
+  if (possibleToken) {
+    Cookies.set("token", String(possibleToken), {
+      expires: 7,
+      sameSite: "lax",
+      path: "/",
+    });
+  }
+
   return response;
 });
-
 
 // Search Flight
 export const searchFlight = createAsyncThunk(
@@ -99,6 +81,40 @@ export const searchFlight = createAsyncThunk(
     });
   }
 );
+
+
+const persistSlice = createSlice({
+  name: "persist",
+  initialState,
+  reducers: {
+    clearSearchResults: (state) => {
+      state.searchResults = [];
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userData = action.payload;
+      })
+      .addCase(login.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(searchFlight.pending, (state) => {
+        state.isLoadingSearchResults = true;
+      })
+      .addCase(searchFlight.fulfilled, (state, action) => {
+        state.isLoadingSearchResults = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchFlight.rejected, (state, action) => {
+        state.isLoadingSearchResults = false;
+      })
+  },
+});
 
 export const { clearSearchResults } = persistSlice.actions;
 export default persistSlice.reducer;

@@ -14,7 +14,8 @@ import { Header } from "@/components/header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "nextjs-toploader/app";
+import { useRouter } from "nextjs-toploader/app"; 
+import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ import { login } from "@/_core/features/persistSlice";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const { isLoading } = useSelector((state) => state.persist);
@@ -40,7 +42,14 @@ export default function LoginPage() {
   const onSubmit = (data) => {
     dispatch(login(data))
       .unwrap()
-      .then(() => router.replace("/"));
+      .then(() => {
+        const next = searchParams.get("next");
+        if (next) {
+          window.location.replace(next);
+        } else {
+          window.location.replace("/");
+        }
+      });
   };
 
   return (
