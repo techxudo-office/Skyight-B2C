@@ -3,7 +3,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { forwardRef, useCallback, useContext, useEffect, useState } from "react";
+import { forwardRef, useCallback, useContext, useEffect, useState,createContext } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const CarouselContext = createContext(null);
 

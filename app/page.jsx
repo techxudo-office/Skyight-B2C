@@ -3,15 +3,73 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Star, Clock, Wifi, Coffee, Phone, Menu } from "lucide-react";
+import { ArrowRight, Star, Clock, Wifi, Coffee, Phone } from "lucide-react";
 import Link from "next/link";
 import { trendingDestinations } from "@/data/data";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"; // <- make sure you have this from shadcn/ui
+import { useState } from "react";
+
+
+// Dummy data for tour packages (replace with API/data)
+const tourPackages = [
+  {
+    country: "Egypt",
+    days: "9 Days – 7 Night",
+    title: "Cairo to Nile Cruise",
+    image: "/cairo.jpg",
+    rating: 4.4,
+    reviews: 293,
+    price: "$3,896",
+  },
+  {
+    country: "Indonesia",
+    days: "17 Days – 14 Night",
+    title: "Bali & Java",
+    image: "/indonesia.jpg",
+    rating: 4.8,
+    reviews: 4200,
+    price: "$8,996",
+  },
+  {
+    country: "Turkey",
+    days: "6 Days – 5 Night",
+    title: "Blue Mosque",
+    image: "/turkey.jpg",
+    rating: 4.6,
+    reviews: 563,
+    price: "$4,996",
+  },
+  {
+    country: "Maldives",
+    days: "5 Days – 4 Night",
+    title: "Maldives Huruval",
+    image: "/maldives.jpg",
+    rating: 4.9,
+    reviews: 6900,
+    price: "$9,587",
+  },
+  {
+    country: "South Korea",
+    days: "11 Days – 8 Night",
+    title: "Korea",
+    image: "/korea.jpg",
+    rating: 3.9,
+    reviews: 2000,
+    price: "$7,679",
+  },
+];
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Top Banner */}
-      <div className="bg-blue-600 text-white text-center text-sm py-5">
+      <div className="bg-primary text-white text-center text-sm py-5">
         Summer specials offer • The season&apos;s best deals | Up to 60% off
       </div>
 
@@ -28,7 +86,6 @@ export default function HomePage() {
             <Phone className="w-4 h-4" />
             <span>(028) 858-494-999</span>
           </div>
-          {/* <Menu className="w-6 h-6 cursor-pointer" /> */}
         </div>
       </header>
 
@@ -36,7 +93,7 @@ export default function HomePage() {
       <section
         className="relative flex items-center justify-center min-h-[90vh] text-center text-white"
         style={{
-          backgroundImage: "url('/mumbai.jpg')", // replace with your image path
+          backgroundImage: "url('/mumbai.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -45,15 +102,83 @@ export default function HomePage() {
           <p className="mb-4 text-lg">No stress, just real experiences.</p>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Top places to visit, eat or experience –{" "}
-            <span className="text-blue-600">all in one spot.</span>
+            <span className="text-primary">all in one spot.</span>
           </h2>
           <Button size="lg" className="rounded-full px-8 py-6 text-lg">
             Let's Explore
           </Button>
         </div>
-        {/* Overlay */}
         <div className="absolute inset-0 bg-black/40" />
       </section>
+
+      {/* All Inclusive Tour Packages Carousel */}
+       <section className="py-20 bg-white text-black">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-2 text-primary">
+          All Inclusive tour packages.
+        </h2>
+        <p className="text-center text">
+          Travel from anywhere in India or worldwide. Pick a tour that fits you —
+          starting right from your city.
+        </p>
+
+        {/* Carousel */}
+        <Carousel className="w-full max-w-6xl mx-auto mt-5">
+          <CarouselContent>
+            {tourPackages.map((pkg, idx) => (
+              <CarouselItem
+                key={idx}
+                className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+              >
+                <Card className="rounded-2xl overflow-hidden bg-zinc-900 text-white">
+                  <div className="aspect-video">
+                    <img
+                      src={pkg.image}
+                      alt={pkg.title}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <p className="text-xs text-gray-400 mb-1">
+                      {pkg.country} • {pkg.days}
+                    </p>
+                    <h3 className="font-bold text-lg mb-2">{pkg.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className={`px-2 py-0.5 text-xs font-semibold rounded ${
+                          pkg.rating >= 4.5
+                            ? "bg-primary"
+                            : pkg.rating >= 4.0
+                            ? "bg-primary"
+                            : "bg-primary"
+                        }`}
+                      >
+                        {pkg.rating}
+                      </span>
+                      <span className="text-sm text-gray-300">
+                        Wonderful ({pkg.reviews.toLocaleString()} reviews)
+                      </span>
+                    </div>
+                    <p className="text-xl font-bold mb-4">
+                      {pkg.price}{" "}
+                      <span className="text-sm font-normal">/ per person</span>
+                    </p>
+                    <Button className="w-full rounded-full" variant="secondary">
+                      Request Callback
+                    </Button>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          {/* Navigation Arrows */}
+          <CarouselPrevious className="left-[-4rem] bg-black hover:bg-white/40 text-white" />
+          <CarouselNext className="right-[-4rem] bg-black hover:bg-white/40 text-white" />
+        </Carousel>
+      </div>
+    </section>
+
 
       {/* Why Choose Section (kept same) */}
       <section className="py-16 bg-muted/50">
@@ -93,7 +218,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trending Destinations (same) */}
+      {/* Trending Destinations (same as before) */}
       <section className="py-16">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-between mb-12">
