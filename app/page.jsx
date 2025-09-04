@@ -12,8 +12,37 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"; // <- make sure you have this from shadcn/ui
+} from "@/components/ui/carousel";
 import { useState } from "react";
+
+const categories = ["All", "Beach", "Culture", "Ski", "Family"];
+
+const stays = [
+  {
+    city: "Calangute",
+    location: "Goa",
+    country: "India",
+    flag: "🇮🇳",
+    image: "/goa.jpg",
+    price: "$4,895",
+  },
+  {
+    city: "Mumbai",
+    location: "Maharashtra",
+    country: "India",
+    flag: "🇮🇳",
+    image: "/mumbai.jpg",
+    price: "$1,468",
+  },
+  {
+    city: "Bangkok",
+    location: "Bangkok Province",
+    country: "Thailand",
+    flag: "🇹🇭",
+    image: "/bangkok.jpg",
+    price: "$7,466",
+  },
+];
 
 const teamMembers = [
   {
@@ -98,6 +127,7 @@ const tourPackages = [
 ];
 
 export default function HomePage() {
+  const [activeCategory, setActiveCategory] = useState("All");
   return (
     <div className="min-h-screen bg-background">
       {/* Top Banner */}
@@ -216,6 +246,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Team Members Portion */}
       <section className="bg-white text-black py-20">
         <div className="container mx-auto px-4 text-center">
           {/* Heading */}
@@ -223,8 +254,8 @@ export default function HomePage() {
             Travel. Explore. Celebrate life.
           </h2>
           <p className="max-w-2xl mx-auto text-black-300 mb-16">
-            At Skiyght, we keep travel simple, fun, and real. From where to go to
-            what to do, we help you plan every step — all in one clean, easy
+            At Skiyght, we keep travel simple, fun, and real. From where to go
+            to what to do, we help you plan every step — all in one clean, easy
             space. We’re a small, passionate team who loves to travel and build
             helpful tools for others who do too.
           </p>
@@ -266,6 +297,78 @@ export default function HomePage() {
               <p className="text-2xl font-bold">250+</p>
               <p className="text-sm">Packages worldwide</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Explore Destination Portion */}
+      <section className="bg-white text-black py-20">
+        <div className="container mx-auto px-4 text-center">
+          {/* Heading */}
+          <p className="text-sm uppercase tracking-wider mb-2 text-black-300">
+            Explore Destinations
+          </p>
+          <h2 className="text-4xl font-bold mb-4">Stays in Top Destinations</h2>
+          <p className="text-black-400 mb-12 max-w-2xl mx-auto">
+            Find the right place to stay — beach breaks, family getaways, and
+            more.
+          </p>
+
+          {/* Categories */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant="ghost"
+                className={`rounded-full px-6 py-2 ${
+                  activeCategory === cat
+                    ? "bg-primary text-black font-semibold"
+                    : "bg-zinc-900 text-white hover:bg-white"
+                }`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {stays.map((stay, idx) => (
+              <Card
+                key={idx}
+                className="bg-zinc-900 text-white rounded-2xl overflow-hidden"
+              >
+                <div className="aspect-video">
+                  <img
+                    src={stay.image}
+                    alt={stay.city}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h3 className="text-xl font-bold mb-1">{stay.city}</h3>
+                    <p className="text-sm text-gray-400 mb-4">
+                      {stay.location} • {stay.flag} {stay.country}
+                    </p>
+                    <p className="text-lg font-semibold">{stay.price}</p>
+                    <p className="text-sm text-gray-400">Avg. nightly price</p>
+                  </div>
+
+                  {/* Arrow button bottom right */}
+                  <div className="flex justify-end mt-4">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="rounded-full bg-white/10 hover:bg-white/20"
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
