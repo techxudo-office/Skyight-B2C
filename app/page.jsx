@@ -15,6 +15,38 @@ import {
 } from "@/components/ui/carousel"; // <- make sure you have this from shadcn/ui
 import { useState } from "react";
 
+const teamMembers = [
+  {
+    name: "Rishant Singh",
+    role: "Vice President – Product",
+    title: "The Code Whisperer",
+    image: "/user_1.jpg",
+  },
+  {
+    name: "Nisha Kapoor",
+    role: "CEO & Co-Founder",
+    title: "The Idea Box",
+    image: "/user_2.jpg",
+  },
+  {
+    name: "Kabir Malhotra",
+    role: "Head of Engineering",
+    title: "Life of the Party",
+    image: "/user_3.jpg",
+  },
+  {
+    name: "Rohan Verma",
+    role: "Vice President – Growth",
+    title: "The Show Runner",
+    image: "/user_4.jpg",
+  },
+  {
+    name: "Aarav Kapoor",
+    role: "CTO & Founder",
+    title: "The Visionary",
+    image: "/user_5.jpg",
+  },
+];
 
 // Dummy data for tour packages (replace with API/data)
 const tourPackages = [
@@ -112,73 +144,131 @@ export default function HomePage() {
       </section>
 
       {/* All Inclusive Tour Packages Carousel */}
-       <section className="py-20 bg-white text-black">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-2 text-primary">
-          All Inclusive tour packages.
-        </h2>
-        <p className="text-center text">
-          Travel from anywhere in India or worldwide. Pick a tour that fits you —
-          starting right from your city.
-        </p>
+      <section className="py-20 bg-white text-black">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-2 text-primary">
+            All Inclusive tour packages.
+          </h2>
+          <p className="text-center text">
+            Travel from anywhere in India or worldwide. Pick a tour that fits
+            you — starting right from your city.
+          </p>
 
-        {/* Carousel */}
-        <Carousel className="w-full max-w-6xl mx-auto mt-5">
-          <CarouselContent>
-            {tourPackages.map((pkg, idx) => (
-              <CarouselItem
-                key={idx}
-                className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
-              >
-                <Card className="rounded-2xl overflow-hidden bg-zinc-900 text-white">
-                  <div className="aspect-video">
-                    <img
-                      src={pkg.image}
-                      alt={pkg.title}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <p className="text-xs text-gray-400 mb-1">
-                      {pkg.country} • {pkg.days}
-                    </p>
-                    <h3 className="font-bold text-lg mb-2">{pkg.title}</h3>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span
-                        className={`px-2 py-0.5 text-xs font-semibold rounded ${
-                          pkg.rating >= 4.5
-                            ? "bg-primary"
-                            : pkg.rating >= 4.0
-                            ? "bg-primary"
-                            : "bg-primary"
-                        }`}
-                      >
-                        {pkg.rating}
-                      </span>
-                      <span className="text-sm text-gray-300">
-                        Wonderful ({pkg.reviews.toLocaleString()} reviews)
-                      </span>
+          {/* Carousel */}
+          <Carousel className="w-full max-w-6xl mx-auto mt-5">
+            <CarouselContent>
+              {tourPackages.map((pkg, idx) => (
+                <CarouselItem
+                  key={idx}
+                  className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                >
+                  <Card className="rounded-2xl overflow-hidden bg-zinc-900 text-white">
+                    <div className="aspect-video">
+                      <img
+                        src={pkg.image}
+                        alt={pkg.title}
+                        className="object-cover w-full h-full"
+                      />
                     </div>
-                    <p className="text-xl font-bold mb-4">
-                      {pkg.price}{" "}
-                      <span className="text-sm font-normal">/ per person</span>
-                    </p>
-                    <Button className="w-full rounded-full" variant="secondary">
-                      Request Callback
-                    </Button>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-400 mb-1">
+                        {pkg.country} • {pkg.days}
+                      </p>
+                      <h3 className="font-bold text-lg mb-2">{pkg.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span
+                          className={`px-2 py-0.5 text-xs font-semibold rounded ${
+                            pkg.rating >= 4.5
+                              ? "bg-primary"
+                              : pkg.rating >= 4.0
+                              ? "bg-primary"
+                              : "bg-primary"
+                          }`}
+                        >
+                          {pkg.rating}
+                        </span>
+                        <span className="text-sm text-gray-300">
+                          Wonderful ({pkg.reviews.toLocaleString()} reviews)
+                        </span>
+                      </div>
+                      <p className="text-xl font-bold mb-4">
+                        {pkg.price}{" "}
+                        <span className="text-sm font-normal">
+                          / per person
+                        </span>
+                      </p>
+                      <Button
+                        className="w-full rounded-full"
+                        variant="secondary"
+                      >
+                        Request Callback
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            {/* Navigation Arrows */}
+            <CarouselPrevious className="left-[-4rem] bg-black hover:bg-white/40 text-white" />
+            <CarouselNext className="right-[-4rem] bg-black hover:bg-white/40 text-white" />
+          </Carousel>
+        </div>
+      </section>
+
+      <section className="bg-white text-black py-20">
+        <div className="container mx-auto px-4 text-center">
+          {/* Heading */}
+          <h2 className="text-4xl font-bold mb-4">
+            Travel. Explore. Celebrate life.
+          </h2>
+          <p className="max-w-2xl mx-auto text-black-300 mb-16">
+            At Skiyght, we keep travel simple, fun, and real. From where to go to
+            what to do, we help you plan every step — all in one clean, easy
+            space. We’re a small, passionate team who loves to travel and build
+            helpful tools for others who do too.
+          </p>
+
+          {/* Team Members */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
+            {teamMembers.map((member, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                {/* Circle Image */}
+                <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <h3 className="text-lg font-semibold">{member.name}</h3>
+                <p className="text-sm text-gray-400">{member.role}</p>
+                <p className="mt-2 text-primary italic">{member.title}</p>
+              </div>
             ))}
-          </CarouselContent>
+          </div>
 
-          {/* Navigation Arrows */}
-          <CarouselPrevious className="left-[-4rem] bg-black hover:bg-white/40 text-white" />
-          <CarouselNext className="right-[-4rem] bg-black hover:bg-white/40 text-white" />
-        </Carousel>
-      </div>
-    </section>
-
+          {/* Bottom Stats */}
+          <div className="mt-16 bg-primary text-white py-6 rounded-lg grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 text-center">
+            <div>
+              <p className="text-2xl font-bold">14</p>
+              <p className="text-sm">Years of Enjoying Life</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">24*7</p>
+              <p className="text-sm">In-trip assistance</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">10K+</p>
+              <p className="text-sm">Happy Travelers</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">250+</p>
+              <p className="text-sm">Packages worldwide</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Why Choose Section (kept same) */}
       <section className="py-16 bg-muted/50">
