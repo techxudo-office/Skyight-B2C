@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star, Clock, Wifi, Coffee, Phone } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { trendingDestinations } from "@/data/data";
 import {
@@ -14,6 +15,64 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useState } from "react";
+
+const testimonials = [
+  {
+    country: "Maldives",
+    days: "8 Days – 7 Night",
+    review:
+      "Travio made travel planning effortless. Book dream trip in minutes!",
+    rating: 4.6,
+    image: "/outing_1.jpg",
+    name: "Riya Patel",
+    location: "Bangalore",
+    avatar: "/user_1.jpg",
+  },
+  {
+    country: "Maldives",
+    days: "8 Days – 7 Night",
+    review:
+      "Planning our Maldives was great, fast and met our needs perfectly. Let's Enjoy the tour",
+    rating: 4.6,
+    image: "/outing_2.jpg",
+    name: "Vikram",
+    location: "Delhi, India",
+    avatar: "/user_2.jpg",
+  },
+  {
+    country: "Indonesia",
+    days: "17 Days – 14 Night",
+    review:
+      "Planning my Bali trip with Travio was a breeze. Bookings and great tips!",
+    rating: 4.6,
+    image: "/outing_3.jpg",
+    name: "Priya Shah",
+    location: "Mumbai",
+    avatar: "/user_3.jpg",
+  },
+  {
+    country: "Dubai",
+    days: "7 Days – 6 Night",
+    review:
+      "Exploring options for Dubai was simple. Suggestions were personal and useful.",
+    rating: 4.6,
+    image: "/outing_4.jpg",
+    name: "Ahmed K.",
+    location: "Dubai",
+    avatar: "/user_4.jpg",
+  },
+  {
+    country: "Maldives",
+    days: "8 Days – 7 Night",
+    review:
+      "Travio revealed hidden gems in Istanbul. It felt like having a local friend!",
+    rating: 4.6,
+    image: "/maldive.jpg",
+    name: "Sarah M",
+    location: "London",
+    avatar: "/user_5.jpg",
+  },
+];
 
 const categories = ["All", "Beach", "Culture", "Ski", "Family"];
 
@@ -41,6 +100,30 @@ const stays = [
     flag: "🇹🇭",
     image: "/bangkok.jpg",
     price: "$7,466",
+  },
+  {
+    city: "Dubai",
+    location: "Dubai",
+    country: "United Arab Emirates",
+    flag: "🇦🇪",
+    image: "/dubai.jpg",
+    price: "$9,250",
+  },
+  {
+    city: "Paris",
+    location: "Île-de-France",
+    country: "France",
+    flag: "🇫🇷",
+    image: "/paris.jpg",
+    price: "$6,730",
+  },
+  {
+    city: "New York",
+    location: "New York",
+    country: "USA",
+    flag: "🇺🇸",
+    image: "/newyork.jpg",
+    price: "$8,999",
   },
 ];
 
@@ -370,6 +453,78 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Testimonial part */}
+
+      <section className="bg-black text-white py-20">
+        <div className="container mx-auto px-4">
+          {/* Heading */}
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-wider mb-2 text-gray-400">
+              Our Testimonials
+            </p>
+            <h2 className="text-4xl font-bold mb-4">
+              Words from Our Adventurers
+            </h2>
+            <p className="text-blue-400">
+              See what our travelers have to say about their journeys with
+              Travio.
+            </p>
+          </div>
+
+          {/* Carousel */}
+          <Carousel className="w-full max-w-7xl mx-auto">
+            <CarouselContent>
+              {testimonials.map((item, idx) => (
+                <CarouselItem
+                  key={idx}
+                  className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                >
+                  <Card className="bg-zinc-900 text-white rounded-2xl overflow-hidden">
+                    {/* Image */}
+                    <div className="relative aspect-video">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="object-cover w-full h-full"
+                      />
+                      <div className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                        {item.rating} ★★★★★
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <CardContent className="p-4 flex flex-col justify-between">
+                      <p className="text-xs text-gray-400 mb-1">
+                        {item.country} • {item.days}
+                      </p>
+                      <p className="mb-4 font-medium">"{item.review}"</p>
+
+                      {/* User Info */}
+                      <div className="flex items-center gap-3 mt-auto">
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src={item.avatar} alt={item.name} />
+                          <AvatarFallback>{item.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-semibold">{item.name}</p>
+                          <p className="text-xs text-gray-400">
+                            {item.location}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            {/* Navigation Arrows */}
+            <CarouselPrevious className="left-[-3rem] bg-white/10 hover:bg-white/20 text-white" />
+            <CarouselNext className="right-[-3rem] bg-white/10 hover:bg-white/20 text-white" />
+          </Carousel>
         </div>
       </section>
 
