@@ -528,6 +528,51 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Explore Destinations Country */}
+      <section className="bg-white text-black py-20">
+        <div className="container mx-auto px-4 text-center">
+          {/* Heading */}
+          <p className="text-sm uppercase tracking-wider mb-2 text-gray-400">
+            Explore Destinations Country
+          </p>
+          <h2 className="text-4xl font-bold mb-12">Where to next?</h2>
+
+          {/* Destination Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[
+              { name: "India", trips: 47, image: "/india.jpg" },
+              { name: "Italy", trips: 18, image: "/italy.jpg" },
+              { name: "Greece", trips: 11, image: "/greece.jpg" },
+              { name: "Portugal", trips: 14, image: "/portugal.jpg" },
+              { name: "Japan", trips: 10, image: "/japan.jpg" },
+              { name: "Peru", trips: 15, image: "/peru.jpg" },
+              { name: "South Africa", trips: 14, image: "/southafrica.jpg" },
+              { name: "Europe", trips: 104, image: "/europe.jpg" },
+            ].map((dest, idx) => (
+              <div
+                key={idx}
+                className="relative rounded-2xl overflow-hidden group cursor-pointer"
+              >
+                {/* Background Image */}
+                <img
+                  src={dest.image}
+                  alt={dest.name}
+                  className="object-cover w-full h-48 sm:h-56 lg:h-64 transform group-hover:scale-110 transition duration-500"
+                />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
+                  <h3 className="text-xl text-white font-bold">{dest.name}</h3>
+                  <span className="mt-2 inline-block bg-white text-black text-xs px-3 py-1 rounded-full">
+                    {dest.trips} Trips Packages
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Section (kept same) */}
       <section className="py-16 bg-muted/50">
         <div className="container px-4 mx-auto">
