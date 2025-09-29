@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
 
 // Step 1: Ek single team member ka card banayein
 const TeamMemberCard = ({ image, handwrittenText, name, title }) => (
-    <div className="flex  items-center text-center gap-4">
+    <div className="flex  flex-col md:flex-row items-center text-center gap-4">
         <div className="relative overflow-visible">
             <img
                 src={image}
