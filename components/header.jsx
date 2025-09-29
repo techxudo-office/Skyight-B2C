@@ -22,9 +22,12 @@ export function Header() {
     setMounted(true);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch({ type: "user/logout" });
-    Cookies.remove("token"); // remove token cookie
+    Cookies.remove("token");
+    try {
+      await fetch("/api/session", { method: "DELETE" });
+    } catch {}
     router.push("/login");
     toast.success("Logged out successfully");
   };

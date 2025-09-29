@@ -14,7 +14,7 @@ import { Header } from "@/components/header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "nextjs-toploader/app"; 
+import { useRouter } from "nextjs-toploader/app";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Plane } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -40,15 +40,18 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data) => {
+    const next = searchParams.get("next");
     dispatch(login(data))
       .unwrap()
-      .then(() => {
-        const next = searchParams.get("next");
-        if (next) {
-          window.location.replace(next);
-        } else {
-          window.location.replace("/");
-        }
+      .then(async (res) => {
+        try {
+          await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: res?.token }),
+          });
+        } catch {}
+        router.replace(next || "/");
       });
   };
 
