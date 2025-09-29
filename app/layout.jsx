@@ -21,7 +21,9 @@ export default function RootLayout({ children }) {
   console.log("CICD TEST 3.1")
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body
+      //  className={inter.className}
+      >
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider
@@ -32,7 +34,7 @@ export default function RootLayout({ children }) {
             >
               <Toaster />
               {children}
-              <NextTopLoader showSpinner={false}/>
+              <NextTopLoader showSpinner={false} />
             </ThemeProvider>
           </PersistGate>
         </Provider>

@@ -5,7 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star, Clock, Wifi, Coffee, Phone } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import CardSlider from "@/components/CardSlider";
 import Link from "next/link";
+import { motion } from "framer-motion"
 import { trendingDestinations } from "@/data/data";
 import {
   Carousel,
@@ -14,7 +16,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Hero from "@/components/Hero";
+import TeamSection from "@/components/TeamSection";
 
 const testimonials = [
   {
@@ -210,6 +214,27 @@ const tourPackages = [
 ];
 
 export default function HomePage() {
+  const images = [
+    "/mumbai.jpg",
+    "/goa.jpg",
+    "/greece.jpg"
+  ]
+  const [imgIdx, setImgIdx] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImgIdx((prev) => {
+        if (prev < images.length - 1) {
+          return prev + 1
+        } else {
+          return 0
+        }
+      })
+    }, 7000)
+
+    return () => clearInterval(interval)
+  }, [images.length])
+
+  console.log(imgIdx, "imgidx")
   const [activeCategory, setActiveCategory] = useState("All");
   return (
     <div className="min-h-screen bg-background">
@@ -235,29 +260,10 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section
-        className="relative flex items-center justify-center min-h-[90vh] text-center text-white"
-        style={{
-          backgroundImage: "url('/mumbai.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="relative z-10 px-4 max-w-3xl">
-          <p className="mb-4 text-lg">No stress, just real experiences.</p>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Top places to visit, eat or experience –{" "}
-            <span className="text-primary">all in one spot.</span>
-          </h2>
-          <Button size="lg" className="rounded-full px-8 py-6 text-lg">
-            Let's Explore
-          </Button>
-        </div>
-        <div className="absolute inset-0 bg-black/40" />
-      </section>
+      <Hero imgIdx={imgIdx} />
 
       {/* All Inclusive Tour Packages Carousel */}
-      <section className="py-20 bg-white text-black">
+      {/* <section className="py-20 bg-white text-black">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-2 text-primary">
             All Inclusive tour packages.
@@ -267,7 +273,6 @@ export default function HomePage() {
             you — starting right from your city.
           </p>
 
-          {/* Carousel */}
           <Carousel className="w-full max-w-6xl mx-auto mt-5">
             <CarouselContent>
               {tourPackages.map((pkg, idx) => (
@@ -290,13 +295,12 @@ export default function HomePage() {
                       <h3 className="font-bold text-lg mb-2">{pkg.title}</h3>
                       <div className="flex items-center gap-2 mb-2">
                         <span
-                          className={`px-2 py-0.5 text-xs font-semibold rounded ${
-                            pkg.rating >= 4.5
-                              ? "bg-primary"
-                              : pkg.rating >= 4.0
+                          className={`px-2 py-0.5 text-xs font-semibold rounded ${pkg.rating >= 4.5
+                            ? "bg-primary"
+                            : pkg.rating >= 4.0
                               ? "bg-primary"
                               : "bg-primary"
-                          }`}
+                            }`}
                         >
                           {pkg.rating}
                         </span>
@@ -322,14 +326,14 @@ export default function HomePage() {
               ))}
             </CarouselContent>
 
-            {/* Navigation Arrows */}
             <CarouselPrevious className="left-[-4rem] bg-black hover:bg-white/40 text-white" />
             <CarouselNext className="right-[-4rem] bg-black hover:bg-white/40 text-white" />
           </Carousel>
         </div>
-      </section>
-
+      </section> */}
+      <CardSlider />
       {/* Team Members Portion */}
+      <TeamSection />
       <section className="bg-white text-black py-20">
         <div className="container mx-auto px-4 text-center">
           {/* Heading */}
@@ -403,11 +407,10 @@ export default function HomePage() {
               <Button
                 key={cat}
                 variant="ghost"
-                className={`rounded-full px-6 py-2 ${
-                  activeCategory === cat
-                    ? "bg-primary text-black font-semibold"
-                    : "bg-zinc-900 text-white hover:bg-white"
-                }`}
+                className={`rounded-full px-6 py-2 ${activeCategory === cat
+                  ? "bg-primary text-black font-semibold"
+                  : "bg-zinc-900 text-white hover:bg-white"
+                  }`}
                 onClick={() => setActiveCategory(cat)}
               >
                 {cat}
@@ -656,6 +659,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </div>
+    </div >
   );
 }
