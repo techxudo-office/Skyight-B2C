@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 import { Header } from "@/components/header";
@@ -17,6 +17,10 @@ const FlightDetailsPage = () => {
   const router = useRouter();
   const params = useSearchParams();
   const { searchResults } = useSelector((state) => state.persist);
+
+  useEffect(() => {
+    console.log(searchResults);
+  }, [searchResults]);
 
   if (!searchResults || !searchResults[0]) {
     return (

@@ -81,9 +81,9 @@ export default function FlightsPage() {
       })
     );
 
-    return () => {
-      dispatch(clearSearchResults());
-    };
+    // return () => {
+    //   dispatch(clearSearchResults());
+    // };
   }, [dispatch, params, userData?.token]);
 
   const handleAirlineChange = (airline, checked) => {

@@ -18,11 +18,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { confirmBooking } from "@/_core/features/bookingSlice";
 import { City } from "country-state-city";
+import { useRouter } from "nextjs-toploader/app";
 
 export default function ConfirmBookingPage() {
+  const router = useRouter();
   const params = useSearchParams();
   const travellersDef = useTravellerDefs(params);
-
   const {
     control,
     register,
@@ -233,7 +234,7 @@ export default function ConfirmBookingPage() {
       })
     )
       .unwrap()
-      .then(() => navigate("/dashboard/flight-bookings")) // on success, navigate away
+      .then(() => router.push("/dashboard/flight-bookings"))
       .catch(() => {
         // error handling could be enhanced here
       });
