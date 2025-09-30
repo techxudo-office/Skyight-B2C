@@ -1,0 +1,20 @@
+/* src/index.css */
+
+.swiper-slide {
+  /* Yeh ensure karta hai ke cards ki height barabar ho */
+  height: auto; 
+}
+
+.swiper-pagination-testimonials .swiper-pagination-bullet {
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #444; /* Inactive dot color */
+  opacity: 1;
+  transition: background-color 0.3s, width 0.3s;
+}
+
+.swiper-pagination-testimonials .swiper-pagination-bullet-active {
+  width: 40px;
+  background-color: #fff; /* Active dot color */
+}

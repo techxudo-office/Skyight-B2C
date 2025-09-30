@@ -8,7 +8,9 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import DestinationCard from './DestinationCard';
+import DestinationCard from './components/DestinationCard';
+import Heading from '../../Heading';
+import FadeupAnimation from '../../FadeUpAnimation';
 
 // Sample Data (bilkul video jaisa)
 const destinationsData = [
@@ -97,16 +99,8 @@ const destinationsData = [
 export default function CardSlider() {
     return (
         <div className="bg-black py-16">
-
-
             <div className="container max-md:px-4 mx-auto">
-                <h2 className="text-3xl font-bold text-center mb-2 text-primary">
-                    All Inclusive tour packages.
-                </h2>
-                <p className="text-center text-white mb-10">
-                    Travel from anywhere in India or worldwide. Pick a tour that fits
-                    you — starting right from your city.
-                </p>
+                <Heading title={" All Inclusive tour packages."} subtitle={"Travel from anywhere in India or worldwide. Pick a tour that fits you — starting right from your city."} />
                 <Swiper
                     modules={[Pagination]}
                     // Responsive breakpoints
@@ -134,11 +128,14 @@ export default function CardSlider() {
                     }}
                     className="pb-12" // Pagination ke liye neeche space
                 >
+                    {/* <FadeupAnimation> */}
                     {destinationsData.map((destination, index) => (
                         <SwiperSlide key={index}>
+
                             <DestinationCard {...destination} />
                         </SwiperSlide>
                     ))}
+                    {/* </FadeupAnimation> */}
                 </Swiper>
 
                 {/* Custom Pagination container */}

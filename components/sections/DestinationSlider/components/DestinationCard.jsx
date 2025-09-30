@@ -36,7 +36,7 @@ export default function DestinationCard({
                 <h3 className="text-white text-xl font-semibold mb-3">{title}</h3>
 
                 <div className="flex items-center gap-2 mb-6">
-                    <span className="bg-green-500/20 text-green-400 font-bold text-sm px-2 py-1 rounded-md">{rating}</span>
+                    <span className="bg-primary/30 text-primary font-bold text-sm px-2 py-1 rounded-md">{rating}</span>
                     <span className="text-gray-300">Wonderful</span>
                     <span className="text-gray-400 text-sm">({reviews} reviews)</span>
                 </div>

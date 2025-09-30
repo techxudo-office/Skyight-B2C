@@ -1,5 +1,6 @@
 "use client";
 import { Inter } from "next/font/google";
+import { Red_Hat_Display } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
 import { store, persistor } from "../_core/store/store";
@@ -9,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
+const redHatDisplay = Red_Hat_Display({ subsets: ["latin"] })
 
 const metadata = {
   title: "Skyight - Find Your Perfect Flight",
@@ -22,7 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-      //  className={inter.className}
+        className={redHatDisplay.className}
       >
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>

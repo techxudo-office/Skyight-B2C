@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
+import Heading from '../../Heading';
 // CSS file import karna na bhoolein
 
 // -------------------------------------------------------------------------
@@ -21,7 +22,7 @@ const TeamMemberCard = ({ image, handwrittenText, name, title }) => (
             />
             <span className="
                 absolute top-1 -left-2 damion whitespace-nowrap
-                 text-yellow-400 text-base font-bold 
+                 text-primary text-base font-bold 
                 transform -rotate-12 z-20
             ">
                 {handwrittenText}
@@ -90,7 +91,8 @@ export default function TeamSection() {
         <section className="bg-black text-white py-24 overflow-hidden">
             <div className="container mx-auto text-center px-4">
                 {/* Top content */}
-                <div className="inline-flex items-center gap-x-4 rounded-full border border-gray-700 bg-gray-900 px-4 py-2 mb-8">
+
+                <div className="inline-flex items-center gap-x-4 rounded-full border border-gray-700 bg-gray-900 px-4 py-2 ">
                     <span className="text-sm">In The Spotlight</span>
                     {/* Placeholder for logos */}
                     <div className="flex items-center gap-x-2">
@@ -98,14 +100,7 @@ export default function TeamSection() {
                         <div className="w-4 h-4 bg-white rounded-full"></div>
                     </div>
                 </div>
-
-                <h1 className="text-5xl md:text-6xl font-bold mb-6">Travel. Explore. Celebrate life.</h1>
-                <p className="max-w-2xl mx-auto text-gray-300 mb-6">
-                    At Travito, we keep travel simple, fun, and real. From where to go to what to do, we help you plan every step – all in one clean, easy space.
-                </p>
-                <p className="max-w-xl mx-auto text-gray-400 mb-20">
-                    We're a small, passionate team who loves to travel and build helpful tools for others who do too.
-                </p>
+                <Heading title={"Travel. Explore. Celebrate life."} subtitle={"At Travio, we keep travel simple, fun, and real. From where to go to what to do, we help you plan every step — all in one clean, easy space."} subtitle2={"We’re a small, passionate team who loves to travel and build helpful tools for others who do too."} />
             </div>
 
             {/* Team Members Infinite Scroller */}
@@ -118,13 +113,13 @@ export default function TeamSection() {
             />
 
             {/* Yellow Bottom Bar */}
-            <div className="bg-yellow-400 mt-20 text-black">
-                <div className="container mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
-                    <div><span className="font-bold text-2xl">14</span> Years of Enjoying Life</div>
-                    <div><span className="font-bold text-2xl">24*7</span> in-trip assistance</div>
-                    <div><span className="font-bold text-2xl">10K+</span> Happy Travelers</div>
-                    <div><span className="font-bold text-2xl">250+</span> Packages across the world</div>
-                    <div className="col-span-2 md:col-span-1"><span className="font-bold text-2xl">98%</span> Positive Reviews</div>
+            <div className="bg-primary mt-20 text-customGray">
+                <div className="container mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div className='flex items-center gap-3'><span className="font-semibold text-3xl">14</span> Years of Enjoying Life</div>
+                    <div className='flex items-center gap-3'><span className="font-semibold text-3xl">24*7</span> in-trip assistance</div>
+                    <div className='flex items-center gap-3'><span className="font-semibold text-3xl">10K+</span> Happy Travelers</div>
+                    <div className='flex items-center gap-3'><span className="font-semibold text-3xl">250+</span> Packages across the world</div>
+                    {/* <div className="col-span-2 md:col-span-1"><span className="font-bold text-2xl">98%</span> Positive Reviews</div> */}
                 </div>
             </div>
         </section>
