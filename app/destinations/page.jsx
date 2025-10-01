@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, MapPin, Calendar, Search } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import Image from "next/image"
 
 export default function DestinationsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -194,7 +195,7 @@ export default function DestinationsPage() {
           {filteredDestinations.map((destination) => (
             <Card key={destination.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video relative">
-                <img
+                <Image
                   src={destination.image || "/placeholder.svg"}
                   alt={destination.city}
                   className="w-full h-full object-cover"

@@ -1,5 +1,5 @@
 // src/components/DestinationsCarousel.jsx
-import React from 'react';
+import React, { useRef } from 'react'; // Import useRef
 // Swiper ke zaroori modules import karein
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
@@ -97,9 +97,12 @@ const destinationsData = [
 ];
 
 export default function CardSlider() {
+    // Create a ref for the pagination container
+    const paginationRef = useRef(null);
+
     return (
         <div className="bg-black py-16">
-            <div className="container max-md:px-4 mx-auto">
+            <div className=" max-md:px-4 mx-auto">
                 <Heading title={" All Inclusive tour packages."} subtitle={"Travel from anywhere in India or worldwide. Pick a tour that fits you — starting right from your city."} />
                 <Swiper
                     modules={[Pagination]}
@@ -117,14 +120,23 @@ export default function CardSlider() {
                         },
                         // Desktop
                         1024: {
-                            slidesPerView: 3.5,
+                            slidesPerView: 3.7,
                             spaceBetween: 30,
                         },
 
                     }}
                     pagination={{
-                        el: '.swiper-pagination-custom',
+                        // Set clickable to true
                         clickable: true,
+                        // Pass the ref to the 'el' property
+                        el: paginationRef.current,
+                    }}
+                    // This is the key part:
+                    // Use the onInit event to dynamically assign the pagination element
+                    onInit={(swiper) => {
+                        swiper.params.pagination.el = paginationRef.current;
+                        swiper.pagination.init();
+                        swiper.pagination.render();
                     }}
                     className="pb-12" // Pagination ke liye neeche space
                 >
@@ -138,8 +150,8 @@ export default function CardSlider() {
                     {/* </FadeupAnimation> */}
                 </Swiper>
 
-                {/* Custom Pagination container */}
-                <div className="swiper-pagination-custom text-center mt-8"></div>
+                {/* Custom Pagination container with the ref */}
+                <div ref={paginationRef} className="swiper-pagination-custom text-center mt-8"></div>
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 // src/components/TestimonialsCarousel.jsx
-import React from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 
@@ -66,6 +66,7 @@ const testimonialsData = [
 ];
 
 export default function Testimonials() {
+    const paginationRef = useRef(null);
     return (
         <section className="bg-black py-20">
             <Heading title={"Words from Our Adventurers"} subtitle={"See what our travelers have to say about their journeys with Travio."} />
@@ -80,8 +81,17 @@ export default function Testimonials() {
                         1440: { slidesPerView: 4 }
                     }}
                     pagination={{
-                        el: '.swiper-pagination-custom',
+                        // Set clickable to true
                         clickable: true,
+                        // Pass the ref to the 'el' property
+                        el: paginationRef.current,
+                    }}
+                    // This is the key part:
+                    // Use the onInit event to dynamically assign the pagination element
+                    onInit={(swiper) => {
+                        swiper.params.pagination.el = paginationRef.current;
+                        swiper.pagination.init();
+                        swiper.pagination.render();
                     }}
                     className="pb-16" // Pagination ke liye neeche space
                 >
@@ -93,7 +103,7 @@ export default function Testimonials() {
                 </Swiper>
 
                 {/* Custom Pagination container */}
-                <div className="swiper-pagination-custom text-center"></div>
+                <div ref={paginationRef} className="swiper-pagination-custom text-center mt-8"></div>
             </div>
         </section>
     );

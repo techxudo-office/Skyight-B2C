@@ -1,6 +1,7 @@
 // src/components/DestinationCard.jsx
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 export default function DestinationCard({
     image,
@@ -13,25 +14,36 @@ export default function DestinationCard({
     price
 }) {
     return (
-        <div className="bg-[#121212] rounded-2xl overflow-hidden flex flex-col group">
+        <div className="  overflow-hidden flex flex-col group">
             {/* Image Section */}
             <div className="relative">
-                <img
-                    src={image}
-                    alt={title}
-                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                    {tags.map((tag, index) => (
-                        <span key={index} className="bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                            {tag}
-                        </span>
-                    ))}
+                <div className="relative w-full h-56">
+                    <Image
+                        fill // This tells the image to fill the parent div
+                        src={image}
+                        alt={title}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
+                        // 2. The height class (h-56) is REMOVED from the Image component.
+                        //    Styling classes like object-cover and rounded-2xl should remain.
+                        className="rounded-2xl object-cover transition-transform duration-300"
+                    />
+                </div>
+                <div className="border-[1px] mt-1.5 rounded-lg relative border-gray-600  ">
+                    {/* <div className='absolute z-10 inset-0 rounded-lg bg-gradient-to-r from-transparent via-transparent to-black/50'></div> */}
+                    <div className='flex relative z-0 items-center justify-center gap-2 animate-slide w-fit'>
+
+                        {tags.map((tag, index) => (
+                            <span key={index} className=" whitespace-nowrap  text-white text-xs px-2 py-1  ">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-5 flex flex-col flex-grow">
+            <div className="py-5 flex flex-col flex-grow">
                 <p className="text-gray-400 text-sm mb-1">{country} • {duration}</p>
                 <h3 className="text-white text-xl font-semibold mb-3">{title}</h3>
 
