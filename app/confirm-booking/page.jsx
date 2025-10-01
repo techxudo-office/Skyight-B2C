@@ -234,7 +234,7 @@ export default function ConfirmBookingPage() {
       })
     )
       .unwrap()
-      .then(() => router.push("/dashboard/flight-bookings"))
+      .then(() => router.push("/bookings"))
       .catch(() => {
         // error handling could be enhanced here
       });
