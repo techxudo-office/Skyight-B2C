@@ -32,14 +32,32 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             set -e
+
+            echo "📦 Docker disk usage BEFORE cleanup:"
+            docker system df || true
+
+            echo "🧹 Cleaning up unused Docker resources..."
             docker system prune -af --volumes || true
+
+            echo "📦 Docker disk usage AFTER cleanup:"
+            docker system df || true
+
+            echo "🔐 Logging into Docker Hub..."
             echo "${{ secrets.DOCKERHUB_TOKEN }}" \
               | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            echo "🛑 Stopping existing skyight-b2c container (if any)..."
             docker rm -f skyight-b2c || true
+
+            echo "⬇️ Pulling latest skyight-b2c image..."
             docker pull connectazeeza/skyight-b2c:latest
+
+            echo "🚀 Starting new skyight-b2c container..."
             docker run -d \
               --name skyight-b2c \
               -p 127.0.0.1:3000:3000 \
               --restart unless-stopped \
               connectazeeza/skyight-b2c:latest
-            echo "✅ Deployed skyight-b2c"
+
+            echo "✅ Deployed skyight-b2c successfully"
+
