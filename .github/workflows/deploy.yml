@@ -38,7 +38,7 @@ jobs:
               | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             echo "⬇️ Pulling latest skyight-b2c image (old container stays running)..."
-            docker pull ***/skyight-b2c:latest
+            docker pull connectazeeza/skyight-b2c:latest
 
             echo "📦 Docker disk usage BEFORE cleanup:"
             docker system df || true
@@ -51,7 +51,7 @@ jobs:
               --name skyight-b2c \
               -p 127.0.0.1:3000:3000 \
               --restart unless-stopped \
-              ***/skyight-b2c:latest
+              connectazeeza/skyight-b2c:latest
 
             echo "🧹 Cleaning up unused Docker resources..."
             docker system prune -af --volumes || true
@@ -60,5 +60,6 @@ jobs:
             docker system df || true
 
             echo "✅ Deployed skyight-b2c with minimal downtime"
+
 
 
