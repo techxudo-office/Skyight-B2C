@@ -33,18 +33,24 @@ jobs:
           script: |
             set -e
 
+            echo "📦 Docker disk usage BEFORE cleanup:"
+            docker system df || true
+
+            echo "🧹 Cleaning up unused Docker resources..."
+            docker system prune -af --volumes || true
+
+            echo "📦 Docker disk usage AFTER cleanup:"
+            docker system df || true
+
             echo "🔐 Logging into Docker Hub..."
             echo "${{ secrets.DOCKERHUB_TOKEN }}" \
               | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            echo "⬇️ Pulling latest skyight-b2c image (old container stays running)..."
-            docker pull connectazeeza/skyight-b2c:latest
-
-            echo "📦 Docker disk usage BEFORE cleanup:"
-            docker system df || true
-
-            echo "🛑 Stopping and removing existing skyight-b2c container (short downtime starts now)..."
+            echo "🛑 Stopping existing skyight-b2c container (if any)..."
             docker rm -f skyight-b2c || true
+
+            echo "⬇️ Pulling latest skyight-b2c image..."
+            docker pull connectazeeza/skyight-b2c:latest
 
             echo "🚀 Starting new skyight-b2c container..."
             docker run -d \
@@ -53,13 +59,5 @@ jobs:
               --restart unless-stopped \
               connectazeeza/skyight-b2c:latest
 
-            echo "🧹 Cleaning up unused Docker resources..."
-            docker system prune -af --volumes || true
-
-            echo "📦 Docker disk usage AFTER cleanup:"
-            docker system df || true
-
-            echo "✅ Deployed skyight-b2c with minimal downtime"
-
-
+            echo "✅ Deployed skyight-b2c successfully"
 
