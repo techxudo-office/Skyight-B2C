@@ -52,6 +52,7 @@ export default function FlightsPage() {
   const adults = Number(params.get("adults") || "1");
   const children = Number(params.get("children") || "0");
   const infants = Number(params.get("infants") || "0");
+  const cabinClass = params.get("cabinClass") || "Economy";
 
   const stopOptions = ["Non-stop", "1 stop", "2+ stops"];
   const airlines = ["SkyWings", "AirGlobal", "EuroFly", "FastJet"];
@@ -70,6 +71,7 @@ export default function FlightsPage() {
       adult: adults,
       child: children,
       infant: infants,
+      cabinClass,
     };
 
     dispatch(

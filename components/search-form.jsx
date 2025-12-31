@@ -48,6 +48,7 @@ export default function SearchForm() {
       adults: 1,
       children: 0,
       infants: 0,
+      cabinClass: { value: "Economy", label: "Economy" },
     },
   });
   const { from, to, adults, children, infants } = watch();
@@ -144,6 +145,7 @@ export default function SearchForm() {
       children: data.children.toString(),
       infants: data.infants.toString(),
       tripType,
+      cabinClass: data.cabinClass.value,
     });
     router.push(`/flights?${params.toString()}`);
   };
@@ -290,6 +292,24 @@ export default function SearchForm() {
                 )}
               </div>
             )}
+
+            {/* Class */}
+            <div className="col-span-2 space-y-2 md:col-span-1 lg:col-span-1">
+              <label className="text-sm font-medium text-muted-foreground">
+                Class
+              </label>
+              {mounted && (
+                <Dropdown
+                  value={watch("cabinClass")}
+                  options={[
+                    { value: "Economy", label: "Economy" },
+                    { value: "Business", label: "Business" },
+                  ]}
+                  onChange={(val) => setValue("cabinClass", val)}
+                  placeholder="Class"
+                />
+              )}
+            </div>
 
             {/* Submit */}
             <div className="flex items-end col-span-2 md:col-span-2 lg:col-span-1">

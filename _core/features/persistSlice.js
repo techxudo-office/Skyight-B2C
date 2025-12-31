@@ -69,6 +69,7 @@ export const searchFlight = createAsyncThunk(
       adult_quantity: payload.adult,
       child_quantity: payload.child,
       infant_quantity: payload.infant,
+      cabin_class: payload.cabinClass || "Economy",
     };
 
     if (payload.tripType === "Return" && payload.returnDate) {
